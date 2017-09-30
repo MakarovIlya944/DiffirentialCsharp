@@ -27,6 +27,12 @@ namespace DiffirentialCsharp
 
 		private void button_calculate_Click(object sender, EventArgs e)
 		{
+			system = new DifferentialEquation((float)Convert.ToDouble(textBox_step), (float)Convert.ToDouble(textBox_leftborder), (float)Convert.ToDouble(textBox_rightborder), (float)Convert.ToDouble(textBox_startcondition));
+		}
+
+		private void Form1_Load(object sender, EventArgs e)
+		{
+
 		}
 	}
 

@@ -30,17 +30,17 @@
 		{
 			this.textBox_startcondition = new System.Windows.Forms.TextBox();
 			this.Instruments = new System.Windows.Forms.Panel();
+			this.button_calculate = new System.Windows.Forms.Button();
 			this.checkBox_yvertex = new System.Windows.Forms.CheckBox();
 			this.checkBox_xvertex = new System.Windows.Forms.CheckBox();
 			this.textBox_step = new System.Windows.Forms.TextBox();
 			this.textBox_rightborder = new System.Windows.Forms.TextBox();
-			this.textBoxleftborder = new System.Windows.Forms.TextBox();
+			this.textBox_leftborder = new System.Windows.Forms.TextBox();
 			this.label_step = new System.Windows.Forms.Label();
 			this.label_startcondition = new System.Windows.Forms.Label();
 			this.label_rightborder = new System.Windows.Forms.Label();
 			this.label_leftborder = new System.Windows.Forms.Label();
 			this.label_Instruments = new System.Windows.Forms.Label();
-			this.button_calculate = new System.Windows.Forms.Button();
 			this.Instruments.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -59,7 +59,7 @@
 			this.Instruments.Controls.Add(this.checkBox_xvertex);
 			this.Instruments.Controls.Add(this.textBox_step);
 			this.Instruments.Controls.Add(this.textBox_rightborder);
-			this.Instruments.Controls.Add(this.textBoxleftborder);
+			this.Instruments.Controls.Add(this.textBox_leftborder);
 			this.Instruments.Controls.Add(this.textBox_startcondition);
 			this.Instruments.Controls.Add(this.label_step);
 			this.Instruments.Controls.Add(this.label_startcondition);
@@ -70,6 +70,16 @@
 			this.Instruments.Name = "Instruments";
 			this.Instruments.Size = new System.Drawing.Size(400, 437);
 			this.Instruments.TabIndex = 1;
+			// 
+			// button_calculate
+			// 
+			this.button_calculate.Location = new System.Drawing.Point(165, 411);
+			this.button_calculate.Name = "button_calculate";
+			this.button_calculate.Size = new System.Drawing.Size(73, 23);
+			this.button_calculate.TabIndex = 6;
+			this.button_calculate.Text = "Вычислить";
+			this.button_calculate.UseVisualStyleBackColor = true;
+			this.button_calculate.Click += new System.EventHandler(this.button_calculate_Click);
 			// 
 			// checkBox_yvertex
 			// 
@@ -107,13 +117,13 @@
 			this.textBox_rightborder.TabIndex = 0;
 			this.textBox_rightborder.TextChanged += new System.EventHandler(this.textBoxleftborder_TextChanged);
 			// 
-			// textBoxleftborder
+			// textBox_leftborder
 			// 
-			this.textBoxleftborder.Location = new System.Drawing.Point(15, 110);
-			this.textBoxleftborder.Name = "textBoxleftborder";
-			this.textBoxleftborder.Size = new System.Drawing.Size(200, 20);
-			this.textBoxleftborder.TabIndex = 0;
-			this.textBoxleftborder.TextChanged += new System.EventHandler(this.textBoxleftborder_TextChanged);
+			this.textBox_leftborder.Location = new System.Drawing.Point(15, 110);
+			this.textBox_leftborder.Name = "textBox_leftborder";
+			this.textBox_leftborder.Size = new System.Drawing.Size(200, 20);
+			this.textBox_leftborder.TabIndex = 0;
+			this.textBox_leftborder.TextChanged += new System.EventHandler(this.textBoxleftborder_TextChanged);
 			// 
 			// label_step
 			// 
@@ -161,16 +171,6 @@
 			this.label_Instruments.TabIndex = 0;
 			this.label_Instruments.Text = "Инструменты";
 			// 
-			// button_calculate
-			// 
-			this.button_calculate.Location = new System.Drawing.Point(165, 411);
-			this.button_calculate.Name = "button_calculate";
-			this.button_calculate.Size = new System.Drawing.Size(73, 23);
-			this.button_calculate.TabIndex = 6;
-			this.button_calculate.Text = "Вычислить";
-			this.button_calculate.UseVisualStyleBackColor = true;
-			this.button_calculate.Click += new System.EventHandler(this.button_calculate_Click);
-			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -178,7 +178,8 @@
 			this.ClientSize = new System.Drawing.Size(984, 461);
 			this.Controls.Add(this.Instruments);
 			this.Name = "Form1";
-			this.Text = "Form1";
+			this.Text = "Дифференциальные уравнения";
+			this.Load += new System.EventHandler(this.Form1_Load);
 			this.Instruments.ResumeLayout(false);
 			this.Instruments.PerformLayout();
 			this.ResumeLayout(false);
@@ -194,7 +195,7 @@
 		private System.Windows.Forms.Label label_startcondition;
 		private System.Windows.Forms.Label label_rightborder;
 		private System.Windows.Forms.Label label_leftborder;
-		private System.Windows.Forms.TextBox textBoxleftborder;
+		private System.Windows.Forms.TextBox textBox_leftborder;
 		private System.Windows.Forms.CheckBox checkBox_yvertex;
 		private System.Windows.Forms.CheckBox checkBox_xvertex;
 		private System.Windows.Forms.TextBox textBox_step;
