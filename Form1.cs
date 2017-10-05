@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Tao.FreeGlut;
+using Tao.OpenGl;
+using Tao.Platform.Windows;
 
 
 namespace DiffirentialCsharp
@@ -15,9 +18,62 @@ namespace DiffirentialCsharp
 	{
 		DifferentialEquation system;
 
+		//Для OpenGl
+		public int cube_ = 0, flour_ = 0, sphere_ = 0;
+		public double time = 0;
+		public Point WindowWH, Mouse;
+		public Vertex eye = new Vertex(0.0, 0.0, 0.0);
+		public Vertex center = new Vertex(0.0, 0.0, 0.0), center_ = new Vertex(0.0, 0.0, 0.0);
+
+		public double fi = 60, psi = 40, fi_ = 60, psi_ = 40, r = 70;
+		public Point mousexy = new Point();
+
+		public float param = 50.0f;
+
 		public Form1()
 		{
 			InitializeComponent();
+			OpenGLWindow.InitializeContexts();
+		}
+
+		private void OpenGLWindow_Load(object sender, EventArgs e)
+		{
+			//----------------------------OpenGL-------------------------------
+			Glut.glutInit();
+			Glut.glutInitDisplayMode(Glut.GLUT_RGB | Glut.GLUT_DOUBLE | Glut.GLUT_DEPTH);
+
+			// цвет отчистки окна 
+			Gl.glClearColor(0, 0, 0, 1);
+
+			// установка порта вывода в соответствии с размерами элемента OpenGLWindow 
+			Gl.glViewport(0, 0, OpenGLWindow.Width, OpenGLWindow.Height);
+
+			// настройка проекции 
+			Gl.glMatrixMode(Gl.GL_PROJECTION);
+			Gl.glLoadIdentity();
+			Glu.gluPerspective(45, (float)OpenGLWindow.Width / (float)OpenGLWindow.Height, 0.1, 200);
+
+			// модельно видовые преобразования
+			Gl.glMatrixMode(Gl.GL_MODELVIEW);
+			Gl.glLoadIdentity();
+
+			// настройка параметров OpenGL для визуализации 
+			Gl.glEnable(Gl.GL_DEPTH_TEST);
+			Gl.glShadeModel(Gl.GL_SMOOTH);
+
+			// освещение
+			Gl.glEnable(Gl.GL_LIGHTING);
+			Gl.glEnable(Gl.GL_LIGHT0);
+			Gl.glEnable(Gl.GL_LIGHT1);
+
+			// смещивание
+			Gl.glEnable(Gl.GL_BLEND);
+			Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
+
+			// точка
+			Gl.glEnable(Gl.GL_POINT_SMOOTH);
+			//-----------------------------OpenGL------------------------------
+
 		}
 
 		private void textBoxleftborder_TextChanged(object sender, EventArgs e)
@@ -27,6 +83,13 @@ namespace DiffirentialCsharp
 
 		private void button_calculate_Click(object sender, EventArgs e)
 		{
+			panel1.Visible = false;
+			OpenGLWindow.Visible = false;
+			if (checkBox_xvertex.Enabled && checkBox_yvertex.Enabled)
+				OpenGLWindow.Visible = true;
+			else
+				panel1.Visible = true;
+
 			system = new DifferentialEquation((float)Convert.ToDouble(textBox_step.Text), (float)Convert.ToDouble(textBox_leftborder.Text), (float)Convert.ToDouble(textBox_rightborder.Text), (float)Convert.ToDouble(textBox_startcondition.Text));
 			switch (domainUpDown1.Text)
 			{
@@ -37,8 +100,10 @@ namespace DiffirentialCsharp
 					system.RungeKutta();
 				break;
 			}
-			panel1.Visible = true;
+			
 		}
+
+		//Одномерная функция
 
 		private void panel1_Paint(object sender, PaintEventArgs e)
 		{
@@ -79,6 +144,116 @@ namespace DiffirentialCsharp
 				g.DrawLine(Pens.Black, 0, line - ny * dy, panel1.Width, line - ny * dy);
 				ny++;
 			}
+		}
+
+		//OpenGL
+
+		private void timer1_Tick(object sender, EventArgs e)
+		{
+			
+
+			DrawFuncion();
+
+			time += timer1.Interval / 1000.0;
+		}
+
+		private void Init()
+		{
+			flour_ = Gl.glGenLists(1);
+			Gl.glNewList(flour_, Gl.GL_COMPILE);
+			Flour();
+			Gl.glEndList();
+
+			sphere_ = Gl.glGenLists(1);
+			Gl.glNewList(sphere_, Gl.GL_COMPILE);
+			Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_AMBIENT_AND_DIFFUSE, new float[4] { 0.8f, 0.8f, 1, 0.4f });
+			Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_SPECULAR, new float[4] { 1, 1, 1, 1 });
+			Gl.glMaterialf(Gl.GL_FRONT, Gl.GL_SHININESS, 60);
+			Glut.glutSolidSphere(2, 32, 32);
+			Gl.glEndList();
+		}
+
+		private void DrawFuncion()
+		{
+			Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
+			Gl.glLoadIdentity();
+			Glu.gluLookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z, 0, 1, 0);
+
+			Light();
+			Lamp(new Vertex(0, 20, 0), new Vertex(0, -1, 0));
+
+			Gl.glPushMatrix();
+			Gl.glTranslated(0, -2, 0);
+			Gl.glCallList(flour_);
+			Gl.glPopMatrix();
+
+			Gl.glFlush();
+			OpenGLWindow.Invalidate();
+		}
+
+		//Свет
+
+		private void Lamp(Vertex position, Vertex vector)
+		{
+			vector.NormirovkaEvklid();
+			Gl.glPushMatrix();
+			Gl.glTranslated(position.x, position.y, position.z);
+			Gl.glDisable(Gl.GL_LIGHTING);
+			Gl.glColor3d(0, 0, 0);
+			Glut.glutWireCube(1);
+			Gl.glEnable(Gl.GL_LIGHTING);
+
+			float[] light1_positiopn = { position.x, position.y, position.z, 1 };
+			float[] light1_direction = { vector.x, vector.y, vector.z };
+			float[] light1_ambient = { param / 100.0f, param / 100.0f, param / 100.0f, 1 };
+
+			Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_AMBIENT, light1_ambient);
+			Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_POSITION, light1_positiopn);
+			Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_DIFFUSE, light1_ambient);
+			Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_SPECULAR, new float[] { 0, 0.6f, 0.1f, 0 });
+
+			Gl.glLightf(Gl.GL_LIGHT1, Gl.GL_SPOT_CUTOFF, 0.9f);
+			Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_SPOT_DIRECTION, light1_direction);
+			Gl.glLightf(Gl.GL_LIGHT1, Gl.GL_SPOT_EXPONENT, 0.8f);
+
+			Gl.glPopMatrix();
+		}
+
+		private void Light()
+		{
+			float[] light_position = { 0, 2, 0, 0 };
+			float[] light_ambient = { 0.1f, 0.1f, 0.1f, 1 };
+			float[] white_light = { 1, 1, 1, 1 };
+
+			Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_AMBIENT, light_ambient);
+			Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_POSITION, light_position);
+			Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_DIFFUSE, light_ambient);
+			Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_SPECULAR, white_light);
+		}
+
+		//Поверхность
+
+		private void Flour()
+		{
+			Gl.glBegin(Gl.GL_TRIANGLES);
+			Gl.glColor3d(0.1, 0.4, 0.1);
+			Gl.glMaterialf(Gl.GL_FRONT, Gl.GL_SHININESS, 0);
+			Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_SPECULAR, new float[] { 0, 0, 0, 1 });
+			Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_AMBIENT_AND_DIFFUSE, new float[] { 0.1f, 0.4f, 0.1f, 1 });
+			int a = 100;
+			float k = 0.2f, end = (float)a / k * 2;
+			for (int i = 0; i < end; i++)
+				for (int j = 0; j < end; j++)
+				{
+					Gl.glNormal3d(0, 1, 0);
+					Gl.glVertex3f(i * k - a, 0, j * k - a);
+					Gl.glVertex3f((1 + i) * k - a, 0, j * k - a);
+					Gl.glVertex3f((1 + i) * k - a, 0, (1 + j) * k - a);
+					Gl.glVertex3f(i * k - a, 0, j * k - a);
+					Gl.glVertex3f(i * k - a, 0, (1 + j) * k - a);
+					Gl.glVertex3f((1 + i) * k - a, 0, (1 + j) * k - a);
+				}
+			Gl.glEnd();
 		}
 	}
 

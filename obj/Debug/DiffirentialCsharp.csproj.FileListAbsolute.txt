@@ -7,3 +7,9 @@ C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\obj\Deb
 C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.csproj.GenerateResource.Cache
 C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.exe
 C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.pdb
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\bin\Debug\Tao.FreeGlut.dll
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\bin\Debug\Tao.OpenGl.dll
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\bin\Debug\Tao.Platform.Windows.dll
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\bin\Debug\Tao.FreeGlut.xml
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\bin\Debug\Tao.OpenGl.xml
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\bin\Debug\Tao.Platform.Windows.xml
