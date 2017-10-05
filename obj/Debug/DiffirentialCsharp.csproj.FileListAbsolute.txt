@@ -1,0 +1,9 @@
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\bin\Debug\DiffirentialCsharp.exe.config
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\bin\Debug\DiffirentialCsharp.exe
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\bin\Debug\DiffirentialCsharp.pdb
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.csprojResolveAssemblyReference.cache
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.Form1.resources
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.Properties.Resources.resources
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.csproj.GenerateResource.Cache
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.exe
+C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.pdb

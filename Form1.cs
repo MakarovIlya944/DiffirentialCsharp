@@ -27,12 +27,58 @@ namespace DiffirentialCsharp
 
 		private void button_calculate_Click(object sender, EventArgs e)
 		{
-			system = new DifferentialEquation((float)Convert.ToDouble(textBox_step), (float)Convert.ToDouble(textBox_leftborder), (float)Convert.ToDouble(textBox_rightborder), (float)Convert.ToDouble(textBox_startcondition));
+			system = new DifferentialEquation((float)Convert.ToDouble(textBox_step.Text), (float)Convert.ToDouble(textBox_leftborder.Text), (float)Convert.ToDouble(textBox_rightborder.Text), (float)Convert.ToDouble(textBox_startcondition.Text));
+			switch (domainUpDown1.Text)
+			{
+				case "Метод Эйлера":
+					system.Eiler();
+				break;
+				case "Метод Рунге-Кутты":
+					system.RungeKutta();
+				break;
+			}
+			panel1.Visible = true;
 		}
 
-		private void Form1_Load(object sender, EventArgs e)
+		private void panel1_Paint(object sender, PaintEventArgs e)
 		{
+			Graphics g = e.Graphics;
+			DrawNet(e);
+			DrawFunction2D(e);
+		}
 
+		private void DrawFunction2D(PaintEventArgs e)
+		{
+			Graphics g = e.Graphics;
+			var net = system.GetNet();
+			var netf = system.GetNetFunction();
+			int num = system.GetNetNum();
+			float kx = (float)(panel1.Width-5) / num, ky = (float)(panel1.Height - 5) / (netf.Max() - netf.Min());
+			for (int i = 0; i < num - 1; i++)
+			{
+				Pen p = new Pen(Color.FromArgb(0,(int)(255*((float)(i + 1) /num)), (int)(255 * ((float)(i + 1) / num))));
+				g.DrawLine(p, kx * i + 5, panel1.Height - ky * netf[i], kx * (i + 1) + 5, panel1.Height - ky * netf[i + 1]);
+				//g.DrawString(net[i].ToString(),font:"Comics SansMS",)
+			}
+		}
+
+		private void DrawNet(PaintEventArgs e)
+		{
+			Graphics g = e.Graphics;
+			int nx = 0, ny = 0;
+			float dx = 20, dy = 20;
+			float line = 0;
+			while (panel1.Width > nx * dx)
+			{
+				g.DrawLine(Pens.Black, line + nx * dx, 0, line + nx * dx, panel1.Height);
+				nx++;
+			}
+			line = panel1.Height-1;
+			while (line > ny * dy)
+			{
+				g.DrawLine(Pens.Black, 0, line - ny * dy, panel1.Width, line - ny * dy);
+				ny++;
+			}
 		}
 	}
 
@@ -230,22 +276,23 @@ namespace DiffirentialCsharp
 			RightBorder = rightborder;
 			StartCondition = startcondition;
 			Step = step;
-			Net = new List<float>((int)((rightborder - leftborder) / Step) + 1);
+			Net = new List<float>();
+			NetFunction = new List<float>();
 			NetNum = 0;
 			float tmp = leftborder;
 			while (tmp < rightborder - 1E-3)
 			{
-				Net[NetNum] = tmp;
+				Net.Add(tmp);
 				NetNum++;
 				tmp = leftborder + NetNum * Step;
+				NetFunction.Add(0);
 			}
-			Net[NetNum] = rightborder;
-			NetFunction = new List<float>(++NetNum);
+			Net.Add(rightborder);
+			NetFunction.Add(0);
 		}
 
 		public void EilerV()
 		{
-			Vertex r;
 			NetFunctionV[0] = StartConditionV;//началное условие
 			for (int i = 1; i < NetNum; i++)
 				NetFunctionV[i] = NetFunctionV[i - 1] + Function(NetV[i - 1], NetFunctionV[i - 1]) * StepV;
@@ -324,6 +371,21 @@ namespace DiffirentialCsharp
 			}
 		}
 
+		public List<float> GetNet()
+		{
+			return Net;
+		}
+
+		public List<float> GetNetFunction()
+		{
+			return NetFunction;
+		}
+
+		public int GetNetNum()
+		{
+			return NetNum;
+		}
+
 		private int NetNum;
 		private int Dimension = 0;
 
@@ -361,5 +423,4 @@ namespace DiffirentialCsharp
 			return x * x;
 		}
 	}
-
 }

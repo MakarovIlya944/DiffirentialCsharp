@@ -30,6 +30,7 @@
 		{
 			this.textBox_startcondition = new System.Windows.Forms.TextBox();
 			this.Instruments = new System.Windows.Forms.Panel();
+			this.domainUpDown1 = new System.Windows.Forms.DomainUpDown();
 			this.button_calculate = new System.Windows.Forms.Button();
 			this.checkBox_yvertex = new System.Windows.Forms.CheckBox();
 			this.checkBox_xvertex = new System.Windows.Forms.CheckBox();
@@ -41,6 +42,7 @@
 			this.label_rightborder = new System.Windows.Forms.Label();
 			this.label_leftborder = new System.Windows.Forms.Label();
 			this.label_Instruments = new System.Windows.Forms.Label();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.Instruments.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -54,6 +56,7 @@
 			// Instruments
 			// 
 			this.Instruments.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.Instruments.Controls.Add(this.domainUpDown1);
 			this.Instruments.Controls.Add(this.button_calculate);
 			this.Instruments.Controls.Add(this.checkBox_yvertex);
 			this.Instruments.Controls.Add(this.checkBox_xvertex);
@@ -70,6 +73,15 @@
 			this.Instruments.Name = "Instruments";
 			this.Instruments.Size = new System.Drawing.Size(400, 437);
 			this.Instruments.TabIndex = 1;
+			// 
+			// domainUpDown1
+			// 
+			this.domainUpDown1.Items.Add("Метод Рунге-Кутты");
+			this.domainUpDown1.Location = new System.Drawing.Point(253, 311);
+			this.domainUpDown1.Name = "domainUpDown1";
+			this.domainUpDown1.Size = new System.Drawing.Size(120, 20);
+			this.domainUpDown1.TabIndex = 7;
+			this.domainUpDown1.Text = "Метод Эйлера";
 			// 
 			// button_calculate
 			// 
@@ -171,15 +183,25 @@
 			this.label_Instruments.TabIndex = 0;
 			this.label_Instruments.Text = "Инструменты";
 			// 
+			// panel1
+			// 
+			this.panel1.BackColor = System.Drawing.SystemColors.MenuBar;
+			this.panel1.Location = new System.Drawing.Point(418, 12);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(554, 437);
+			this.panel1.TabIndex = 2;
+			this.panel1.Visible = false;
+			this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(984, 461);
+			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.Instruments);
 			this.Name = "Form1";
 			this.Text = "Дифференциальные уравнения";
-			this.Load += new System.EventHandler(this.Form1_Load);
 			this.Instruments.ResumeLayout(false);
 			this.Instruments.PerformLayout();
 			this.ResumeLayout(false);
@@ -201,6 +223,8 @@
 		private System.Windows.Forms.TextBox textBox_step;
 		private System.Windows.Forms.TextBox textBox_rightborder;
 		private System.Windows.Forms.Button button_calculate;
+		private System.Windows.Forms.DomainUpDown domainUpDown1;
+		private System.Windows.Forms.Panel panel1;
 	}
 }
 
