@@ -94,22 +94,21 @@ namespace DiffirentialCsharp
 			for (int i = 0; i < s.Length; i++)
 				Start.v[i] = Convert.ToDouble(s[i]);
 			Cauchy system = new Cauchy(Convert.ToDouble(textBox_leftborder.Text), Convert.ToDouble(textBox_rightborder.Text), Convert.ToDouble(textBox_step.Text), Start);
-			system.Eiler();
-			/*
-			system = new DifferentialEquation((float)Convert.ToDouble(textBox_step.Text), (float)Convert.ToDouble(textBox_leftborder.Text), (float)Convert.ToDouble(textBox_rightborder.Text), (float)Convert.ToDouble(textBox_startcondition.Text));
+			string w = "";
 			switch (domainUpDown1.Text)
 			{
 				case "Метод Эйлера":
-					system.Eiler();
+					system.Eiler(out w);
 					break;
 				case "Метод Рунге-Кутты":
-					system.RungeKutta();
+					system.RungeKutta(out w);
 					break;
-				case "Метод прогноза-коррекции":
-
+				case "Метод Трапеции (прогноз-коррекция)":
+					system.Trapetion(out w, Convert.ToDouble(textBox_accuracy.Text));
 					break;
-			}*/
-
+			}
+			
+			richTextBox1.Text = w;
 		}
 
 		//Одномерная функция
@@ -119,6 +118,14 @@ namespace DiffirentialCsharp
 			Graphics g = e.Graphics;
 			DrawNet(e);
 			DrawFunction2D(e);
+		}
+
+		private void domainUpDown1_SelectedItemChanged(object sender, EventArgs e)
+		{
+			if (domainUpDown1.Text == "Метод Трапеции (прогноз-коррекция)")
+				textBox_accuracy.Visible = true;
+			else
+				textBox_accuracy.Visible = false;
 		}
 
 		private void DrawFunction2D(PaintEventArgs e)
@@ -416,10 +423,14 @@ namespace DiffirentialCsharp
 
 		public double NormaEvklid()
 		{
-			double sum = 0;
-			for (int i = 0; i < Dimension; i++)
-				sum += v[i];
-			return Math.Sqrt(Math.Abs(sum));
+			if (Dimension != 1)
+			{
+				double sum = 0;
+				for (int i = 0; i < Dimension; i++)
+					sum += v[i] * v[i];
+				return Math.Sqrt(Math.Abs(sum));
+			}
+			return Math.Abs(x);
 		}
 
 		public void NormirovkaEvklid()
@@ -466,27 +477,102 @@ namespace DiffirentialCsharp
 			a.v[0] = x * x;
 			return a;
 		}
-		public void Eiler()
+		public void Eiler(out string S)
 		{
 			//вычисление
 			Vertex eiler = Start;
 			double x = Left;
 			string s;
-			StreamWriter File = new StreamWriter(@"C:\Users\Вифлиерон\Documents\GitHub\Eiler.txt");
+			S = "";
+			StreamWriter File = new StreamWriter(@"C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\Eiler.txt");
 			File.WriteLine("x\ty\t||y-Y||");
 			int i = 1;
 			while (x < Right + Eps)
 			{
-				//вывод в файл
 				for(int j=0;j<Vertex.Dimension;j++)
 				{
-					s = string.Format("{0}\t{1}\t {2}",x,eiler.v[j],(Exact(x)-eiler).NormaEvklid());
-					File.WriteLine(s);
+					double tmp = (Exact(x) - eiler).NormaEvklid();
+					if (Vertex.Dimension == 1)
+						tmp = Math.Abs(Exact(x).x - eiler.x);
+					s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x,eiler.v[j],tmp);
+					//вывод в файл
+					File.Write(s);
+					//вывод в приложении
+					S += s;
+					//вывод изображения
 				}
-				//вывод изображения
 				eiler = eiler + Step * RightPart(x, eiler);
 				x = Left + i * Step;
 				i++;
+			}
+			File.Close();
+		}
+
+		public void RungeKutta(out string S)
+		{
+			Vertex k1, k2, k3;
+			Vertex runge = Start;
+			double x = Left;
+			string s;
+			S = "";
+			StreamWriter File = new StreamWriter(@"C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\RungeKutta.txt");
+			File.WriteLine("x\ty\t||y-Y||");
+			int i = 1;
+			while (x < Right + Eps)
+			{
+				for (int j = 0; j < Vertex.Dimension; j++)
+				{
+					double tmp = (Exact(x) - runge).NormaEvklid();
+					if (Vertex.Dimension == 1)
+						tmp = Math.Abs(Exact(x).x - runge.x);
+					s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, runge.v[j], tmp);
+					//вывод в файл
+					File.Write(s);
+					//вывод в приложении
+					S += s;
+					//вывод изображения
+				}
+				k1 = Step * RightPart(x, runge);
+				k2 = Step * RightPart(x + Step / 2, runge + k1 * 0.5);
+				k3 = Step * RightPart(x + Step, runge - k1 + 2 * k2);
+				runge = runge + (k1 + 4 * k2 + k3) * (1.0 / 6);
+				x = Left + i * Step;
+				i++;
+			}
+			File.Close();
+		}
+
+		public void Trapetion(out string S, double accuracy)
+		{
+			Vertex eiler = Start, correct = Start, prev = Start;
+			double x = Left, step = Step;
+			string s;
+			S = "";
+			StreamWriter File = new StreamWriter(@"C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\Trapetion.txt");
+			File.WriteLine("x\ty\t||y-Y||");
+			int i = 1;
+			while (x < Right + Eps)
+			{
+				eiler = prev + step * RightPart(x, prev);
+				correct = prev + (step / 2) * (RightPart(x, prev) + RightPart(x + step, eiler));
+				if ((correct - eiler).NormaEvklid() < accuracy)
+				{
+					x = Left + i * Step;
+					prev = correct;
+					i++;
+					for (int j = 0; j < Vertex.Dimension; j++)
+					{
+						double tmp = (Exact(x) - correct).NormaEvklid();
+						s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, correct.v[j], tmp);
+						//вывод в файл
+						File.Write(s);
+						//вывод в приложении
+						S += s;
+						//вывод изображения
+					}
+				}
+				else
+					step /= 2;
 			}
 			File.Close();
 		}
