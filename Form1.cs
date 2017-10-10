@@ -10,20 +10,19 @@ using System.Windows.Forms;
 using Tao.FreeGlut;
 using Tao.OpenGl;
 using Tao.Platform.Windows;
+using System.IO;
 
 
 namespace DiffirentialCsharp
 {
 	public partial class Form1 : Form
 	{
-		DifferentialEquation system;
-
 		//Для OpenGl
 		public int cube_ = 0, flour_ = 0, sphere_ = 0;
 		public double time = 0;
 		public Point WindowWH, Mouse;
-		public Vertex eye = new Vertex(0.0, 0.0, 0.0);
-		public Vertex center = new Vertex(0.0, 0.0, 0.0), center_ = new Vertex(0.0, 0.0, 0.0);
+		public Vertex eye = new Vertex(new double[3] { 0.0, 0.0, 0.0 });
+		public Vertex center = new Vertex(new double[3] { 0.0, 0.0, 0.0 }), center_ = new Vertex(new double[3] { 0.0, 0.0, 0.0 });
 
 		public double fi = 60, psi = 40, fi_ = 60, psi_ = 40, r = 70;
 		public Point mousexy = new Point();
@@ -85,22 +84,32 @@ namespace DiffirentialCsharp
 		{
 			panel1.Visible = false;
 			OpenGLWindow.Visible = false;
-			if (checkBox_xvertex.Enabled && checkBox_yvertex.Enabled)
+			if (checkBox_xvertex.Checked && checkBox_yvertex.Checked)
 				OpenGLWindow.Visible = true;
 			else
 				panel1.Visible = true;
 
+			string[] s = textBox_startcondition.Text.Split(';');
+			Vertex Start = new Vertex(s.Length);
+			for (int i = 0; i < s.Length; i++)
+				Start.v[i] = Convert.ToDouble(s[i]);
+			Cauchy system = new Cauchy(Convert.ToDouble(textBox_leftborder.Text), Convert.ToDouble(textBox_rightborder.Text), Convert.ToDouble(textBox_step.Text), Start);
+			system.Eiler();
+			/*
 			system = new DifferentialEquation((float)Convert.ToDouble(textBox_step.Text), (float)Convert.ToDouble(textBox_leftborder.Text), (float)Convert.ToDouble(textBox_rightborder.Text), (float)Convert.ToDouble(textBox_startcondition.Text));
 			switch (domainUpDown1.Text)
 			{
 				case "Метод Эйлера":
 					system.Eiler();
-				break;
+					break;
 				case "Метод Рунге-Кутты":
 					system.RungeKutta();
-				break;
-			}
-			
+					break;
+				case "Метод прогноза-коррекции":
+
+					break;
+			}*/
+
 		}
 
 		//Одномерная функция
@@ -115,16 +124,16 @@ namespace DiffirentialCsharp
 		private void DrawFunction2D(PaintEventArgs e)
 		{
 			Graphics g = e.Graphics;
-			var net = system.GetNet();
+			/*var net = system.GetNet();
 			var netf = system.GetNetFunction();
 			int num = system.GetNetNum();
-			float kx = (float)(panel1.Width-5) / num, ky = (float)(panel1.Height - 5) / (netf.Max() - netf.Min());
+			float kx = (float)(panel1.Width - 5) / num, ky = (float)(panel1.Height - 5) / (netf.Max() - netf.Min());
 			for (int i = 0; i < num - 1; i++)
 			{
-				Pen p = new Pen(Color.FromArgb(0,(int)(255*((float)(i + 1) /num)), (int)(255 * ((float)(i + 1) / num))));
+				Pen p = new Pen(Color.FromArgb(0, (int)(255 * ((float)(i + 1) / num)), (int)(255 * ((float)(i + 1) / num))));
 				g.DrawLine(p, kx * i + 5, panel1.Height - ky * netf[i], kx * (i + 1) + 5, panel1.Height - ky * netf[i + 1]);
 				//g.DrawString(net[i].ToString(),font:"Comics SansMS",)
-			}
+			}*/
 		}
 
 		private void DrawNet(PaintEventArgs e)
@@ -138,7 +147,7 @@ namespace DiffirentialCsharp
 				g.DrawLine(Pens.Black, line + nx * dx, 0, line + nx * dx, panel1.Height);
 				nx++;
 			}
-			line = panel1.Height-1;
+			line = panel1.Height - 1;
 			while (line > ny * dy)
 			{
 				g.DrawLine(Pens.Black, 0, line - ny * dy, panel1.Width, line - ny * dy);
@@ -150,7 +159,7 @@ namespace DiffirentialCsharp
 
 		private void timer1_Tick(object sender, EventArgs e)
 		{
-			
+
 
 			DrawFuncion();
 
@@ -180,7 +189,7 @@ namespace DiffirentialCsharp
 			Glu.gluLookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z, 0, 1, 0);
 
 			Light();
-			Lamp(new Vertex(0, 20, 0), new Vertex(0, -1, 0));
+			Lamp(new Vertex(new double[3] { 0, 20, 0 }), new Vertex(new double[3] { 0, -1, 0 }));
 
 			Gl.glPushMatrix();
 			Gl.glTranslated(0, -2, 0);
@@ -203,8 +212,8 @@ namespace DiffirentialCsharp
 			Glut.glutWireCube(1);
 			Gl.glEnable(Gl.GL_LIGHTING);
 
-			float[] light1_positiopn = { position.x, position.y, position.z, 1 };
-			float[] light1_direction = { vector.x, vector.y, vector.z };
+			float[] light1_positiopn = { (float)position.x, (float)position.y, (float)position.z, 1 };
+			float[] light1_direction = { (float)vector.x, (float)vector.y, (float)vector.z };
 			float[] light1_ambient = { param / 100.0f, param / 100.0f, param / 100.0f, 1 };
 
 			Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_AMBIENT, light1_ambient);
@@ -259,102 +268,125 @@ namespace DiffirentialCsharp
 
 	public class Vertex
 	{
-		public float x, y, z;
+		static public int Dimension;
+		public double[] v;
+
+		public double x { get { return v[0]; } }
+		public double y { get { return v[1]; } }
+		public double z { get { return v[2]; } }
+
+		static Vertex()
+		{
+			Dimension = 3;
+		}
 
 		public Vertex()
 		{
-			x = 0; y = 0; z = 0;
-		}
-
-		public Vertex(int k)
-		{
-			x = 1;y = 1;z = 1;
+			v = new double[Dimension];
+			for (int i = 0; i < Dimension; i++)
+				v[i] = 0;
 		}
 
 		public Vertex(Vertex a)
 		{
-			x = a.x;
-			y = a.y;
-			z = a.z;
+			v = new double[Dimension];
+			for (int i = 0; i < Dimension; i++)
+				v[i] = a.v[i];
 		}
 
-		public Vertex(int a, int b, int c)
+		public Vertex(int k)
 		{
-			x = a; y = b; z = c;
+			Dimension=k;
+			v = new double[Dimension];
+			for (int i = 0; i < Dimension; i++)
+				v[i] = 0;
 		}
 
-		public Vertex(float a, float b, float c)
+		public Vertex(int[] a)
 		{
-			x = a; y = b; z = c;
+			v = new double[Dimension];
+			for (int i = 0; i < Dimension; i++)
+				v[i] = a[i];
 		}
 
-		public Vertex(double a, double b, double c)
+		public Vertex(float[] a)
 		{
-			x = (float)a; y = (float)b; z = (float)c;
+			v = new double[Dimension];
+			for (int i = 0; i < Dimension; i++)
+				v[i] = a[i];
+		}
+
+		public Vertex(double[] a)
+		{
+			v = new double[Dimension];
+			for (int i = 0; i < Dimension; i++)
+				v[i] = a[i];
 		}
 
 		public static Vertex operator +(Vertex a, Vertex b)
 		{
-			Vertex c = a;
-			c.x += b.x;
-			c.y += b.y;
-			c.z += b.z;
+			Vertex c = new Vertex(a);
+			for (int i = 0; i < Dimension; i++)
+				c.v[i] += b.v[i];
 			return c;
 		}
 
 		public static Vertex operator -(Vertex a, Vertex b)
 		{
-			Vertex c = a;
-			c.x -= b.x;
-			c.y -= b.y;
-			c.z -= b.z;
+			Vertex c = new Vertex(a);
+			for (int i = 0; i < Dimension; i++)
+				c.v[i] -= b.v[i];
 			return c;
 		}
 
 		public static Vertex operator -(Vertex a)
 		{
-			Vertex c = a;
-			c.x = -a.x;
-			c.y = -a.y;
-			c.z = -a.z;
+			Vertex c = new Vertex();
+			for (int i = 0; i < Dimension; i++)
+				c.v[i] = -a.v[i];
 			return c;
 		}
 
 		public static Vertex operator *(Vertex a, double k)
 		{
-			Vertex c = a;
-			c.x *= (float)k;
-			c.y *= (float)k;
-			c.z *= (float)k;
+			Vertex c = new Vertex(a);
+			for (int i = 0; i < Dimension; i++)
+				c.v[i] *= k;
+			return c;
+		}
+
+		public static Vertex operator *(double k, Vertex a)
+		{
+			Vertex c = new Vertex(a);
+			for (int i = 0; i < Dimension; i++)
+				c.v[i] *= k;
 			return c;
 		}
 
 		public static Vertex operator *(Vertex a, float k)
 		{
-			Vertex c = a;
-			c.x *= k;
-			c.y *= k;
-			c.z *= k;
+			Vertex c = new Vertex(a);
+			for (int i = 0; i < Dimension; i++)
+				c.v[i] *= k;
 			return c;
 		}
 
 		public static Vertex operator *(Vertex a, Vertex b)
 		{//не скалярное умножение
-			Vertex c = new Vertex();
-			c.x = b.x * a.x;
-			c.y = b.y * a.y;
-			c.z = b.z * a.z;
+			Vertex c = new Vertex(a);
+			for (int i = 0; i < Dimension; i++)
+				c.v[i] *= b.v[i];
 			return c;
 		}
 
-		public static Vertex operator *(Vertex a, float[] A)
+		/*public static Vertex operator *(Vertex a, float[] A)
 		{//умножение на матрицу
 			Vertex c = new Vertex();
-			c.x = A[0] * a.x + A[1] * a.y + A[2] * a.z;
-			c.y = A[3] * a.x + A[4] * a.y + A[5] * a.z;
-			c.z = A[6] * a.x + A[7] * a.y + A[8] * a.z;
+			c.v = A[0] * a.v + A[1] * a.y + A[2] * a.z;
+			c.y = A[3] * a.v + A[4] * a.y + A[5] * a.z;
+			c.z = A[6] * a.v + A[7] * a.y + A[8] * a.z;
 			return c;
-		}
+		}*/
 
 		public static bool operator <(Vertex a, Vertex b)
 		{
@@ -369,35 +401,99 @@ namespace DiffirentialCsharp
 		public bool SmallerAllComponents(Vertex a)
 		{
 			bool b = true;
-			b &= x <= a.x;
-			b &= y <= a.y;
-			b &= z <= a.z;
+			for (int i = 0; i < Dimension; i++)
+				b &= v[i] < a.v[i];
 			return b;
 		}
 
 		public bool GreaterAllComponents(Vertex a)
 		{
 			bool b = true;
-			b &= x >= a.x;
-			b &= y >= a.y;
-			b &= z >= a.z;
+			for (int i = 0; i < Dimension; i++)
+				b &= v[i] > a.v[i];
 			return b;
 		}
 
-		public float NormaEvklid()
+		public double NormaEvklid()
 		{
-			return (float)Math.Sqrt(x * x + y * y + z * z);
+			double sum = 0;
+			for (int i = 0; i < Dimension; i++)
+				sum += v[i];
+			return Math.Sqrt(Math.Abs(sum));
 		}
 
 		public void NormirovkaEvklid()
 		{
-			float Norma = this.NormaEvklid();
-			x /= Norma;
-			y /= Norma;
-			z /= Norma;
+			double Norma = 1/this.NormaEvklid();
+			for (int i = 0; i < Dimension; i++)
+				v[i] *= Norma;
 		}
 	}
 
+	public abstract class DiffurEq
+	{
+		public double Left, Right, Step;
+		public Vertex Start;
+		public double Eps = 1E-5;
+		public abstract Vertex Exact(double x);
+		public Vertex RightPart(double x, Vertex y)
+		{
+			Vertex a = new Vertex(y);
+			a.v[0] = a.v[0] / x + x;
+			return a;
+		}
+	}
+
+	public class Cauchy : DiffurEq
+	{
+		public Cauchy(double left, double right, double step, Vertex start)
+		{
+			Left = left;
+			Right = right;
+			Step = step;
+			Start = start;
+		}
+		public void NewCauchy(double left, double right, double step, Vertex start)
+		{
+			Left = left;
+			Right = right;
+			Step = step;
+			Start = start;
+		}
+		public override Vertex Exact(double x)
+		{//точное значение функции
+			Vertex a = new Vertex(1);
+			a.v[0] = x * x;
+			return a;
+		}
+		public void Eiler()
+		{
+			//вычисление
+			Vertex eiler = Start;
+			double x = Left;
+			string s;
+			StreamWriter File = new StreamWriter(@"C:\Users\Вифлиерон\Documents\GitHub\Eiler.txt");
+			File.WriteLine("x\ty\t||y-Y||");
+			int i = 1;
+			while (x < Right + Eps)
+			{
+				//вывод в файл
+				for(int j=0;j<Vertex.Dimension;j++)
+				{
+					s = string.Format("{0}\t{1}\t {2}",x,eiler.v[j],(Exact(x)-eiler).NormaEvklid());
+					File.WriteLine(s);
+				}
+				//вывод изображения
+				eiler = eiler + Step * RightPart(x, eiler);
+				x = Left + i * Step;
+				i++;
+			}
+			File.Close();
+		}
+	}
+
+
+	/*
 	public class DifferentialEquation
 	{
 
@@ -487,7 +583,7 @@ namespace DiffirentialCsharp
 				printf_s("------------------------------------------------\n");
 			}
 			printf_s("\n");
-		}*/
+		}
 
 		public void Eiler()
 		{
@@ -506,7 +602,7 @@ namespace DiffirentialCsharp
 				printf_s("%E\n", abs(NetFunction[i] - AccurateFunction(Net[i])));
 			}
 			printf_s("\n");
-		}*/
+		}
 
 		public void Trapetion(float epsilon)
 		{
@@ -598,4 +694,5 @@ namespace DiffirentialCsharp
 			return x * x;
 		}
 	}
+*/
 }
