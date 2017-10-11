@@ -17,6 +17,7 @@ namespace DiffirentialCsharp
 {
 	public partial class Form1 : Form
 	{
+		List<PointSolve> Net = new List<PointSolve>();
 		//Для OpenGl
 		public int cube_ = 0, flour_ = 0, sphere_ = 0;
 		public double time = 0;
@@ -84,7 +85,7 @@ namespace DiffirentialCsharp
 		{
 			panel1.Visible = false;
 			OpenGLWindow.Visible = false;
-			if (checkBox_xvertex.Checked && checkBox_yvertex.Checked)
+			if (checkBox_yvertex.Checked)
 				OpenGLWindow.Visible = true;
 			else
 				panel1.Visible = true;
@@ -98,7 +99,7 @@ namespace DiffirentialCsharp
 			switch (domainUpDown1.Text)
 			{
 				case "Метод Эйлера":
-					system.Eiler(out w);
+					Net = system.Eiler(out w);
 					break;
 				case "Метод Рунге-Кутты":
 					system.RungeKutta(out w);
@@ -107,11 +108,8 @@ namespace DiffirentialCsharp
 					system.Trapetion(out w, Convert.ToDouble(textBox_accuracy.Text));
 					break;
 			}
-			
 			richTextBox1.Text = w;
 		}
-
-		//Одномерная функция
 
 		private void panel1_Paint(object sender, PaintEventArgs e)
 		{
@@ -131,16 +129,28 @@ namespace DiffirentialCsharp
 		private void DrawFunction2D(PaintEventArgs e)
 		{
 			Graphics g = e.Graphics;
-			/*var net = system.GetNet();
-			var netf = system.GetNetFunction();
-			int num = system.GetNetNum();
-			float kx = (float)(panel1.Width - 5) / num, ky = (float)(panel1.Height - 5) / (netf.Max() - netf.Min());
+			int num = Net.Count;
+			double min, max;
+			MaxMinPointSolve(out min, out max);
+			float kx = (float)(panel1.Width - 5) / num, ky = (float)((panel1.Height - 5) / (max - min));
 			for (int i = 0; i < num - 1; i++)
 			{
 				Pen p = new Pen(Color.FromArgb(0, (int)(255 * ((float)(i + 1) / num)), (int)(255 * ((float)(i + 1) / num))));
-				g.DrawLine(p, kx * i + 5, panel1.Height - ky * netf[i], kx * (i + 1) + 5, panel1.Height - ky * netf[i + 1]);
-				//g.DrawString(net[i].ToString(),font:"Comics SansMS",)
-			}*/
+				g.DrawLine(p, kx * i + 5, panel1.Height - ky * (float)Net[i].y.v[0], kx * (i + 1) + 5, panel1.Height - ky * (float)Net[i+1].y.v[0]);
+			}
+		}
+
+		private void MaxMinPointSolve(out double min,out double max)
+		{
+			min = Net[0].y.x; max = min;
+			foreach (var tmp in Net)
+			{
+				var t = tmp.y.x;
+				if (t < min)
+					min = t;
+				if (t > max)
+					max = t;
+			}
 		}
 
 		private void DrawNet(PaintEventArgs e)
@@ -273,6 +283,25 @@ namespace DiffirentialCsharp
 		}
 	}
 
+	public struct PointSolve
+	{
+		public double x;
+		public Vertex y;
+		public PointSolve(double X, Vertex Y)
+		{
+			x = X;
+			y = Y;
+		}
+		public static bool operator <(PointSolve a, PointSolve b)
+		{
+			return a.y.x < b.y.x;
+		}
+		public static bool operator >(PointSolve a, PointSolve b)
+		{
+			return a.y.x > b.y.x;
+		}
+	}
+
 	public class Vertex
 	{
 		static public int Dimension;
@@ -306,7 +335,7 @@ namespace DiffirentialCsharp
 			Dimension=k;
 			v = new double[Dimension];
 			for (int i = 0; i < Dimension; i++)
-				v[i] = 0;
+				v[i] = 1;
 		}
 
 		public Vertex(int[] a)
@@ -451,6 +480,9 @@ namespace DiffirentialCsharp
 		{
 			Vertex a = new Vertex(y);
 			a.v[0] = a.v[0] / x + x;
+			//a.v[0] = y.y - x;
+			//a.v[1] = y.x;
+			//a.v[2] = 2 * y.y;
 			return a;
 		}
 	}
@@ -475,20 +507,25 @@ namespace DiffirentialCsharp
 		{//точное значение функции
 			Vertex a = new Vertex(1);
 			a.v[0] = x * x;
+			//a.v[0] = 1;
+			//a.v[1] = x;
+			//a.v[2] = x * x;
 			return a;
 		}
-		public void Eiler(out string S)
+		public List<PointSolve> Eiler(out string S)
 		{
+			List<PointSolve> ans = new List<PointSolve>();
 			//вычисление
 			Vertex eiler = Start;
 			double x = Left;
-			string s;
+			string s = "";
 			S = "";
-			StreamWriter File = new StreamWriter(@"C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\Eiler.txt");
+			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\Eiler.txt");
 			File.WriteLine("x\ty\t||y-Y||");
 			int i = 1;
 			while (x < Right + Eps)
 			{
+				ans.Add(new PointSolve(x, eiler));
 				for(int j=0;j<Vertex.Dimension;j++)
 				{
 					double tmp = (Exact(x) - eiler).NormaEvklid();
@@ -501,11 +538,15 @@ namespace DiffirentialCsharp
 					S += s;
 					//вывод изображения
 				}
+				s = "---------------------------------------------------------------\n";
+				File.Write(s);
+				S += s;
 				eiler = eiler + Step * RightPart(x, eiler);
 				x = Left + i * Step;
 				i++;
 			}
 			File.Close();
+			return ans;
 		}
 
 		public void RungeKutta(out string S)
@@ -515,7 +556,7 @@ namespace DiffirentialCsharp
 			double x = Left;
 			string s;
 			S = "";
-			StreamWriter File = new StreamWriter(@"C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\RungeKutta.txt");
+			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\RungeKutta.txt");
 			File.WriteLine("x\ty\t||y-Y||");
 			int i = 1;
 			while (x < Right + Eps)
@@ -532,6 +573,9 @@ namespace DiffirentialCsharp
 					S += s;
 					//вывод изображения
 				}
+				s = "---------------------------------------------------------------\n";
+				File.Write(s);
+				S += s;
 				k1 = Step * RightPart(x, runge);
 				k2 = Step * RightPart(x + Step / 2, runge + k1 * 0.5);
 				k3 = Step * RightPart(x + Step, runge - k1 + 2 * k2);
@@ -548,7 +592,7 @@ namespace DiffirentialCsharp
 			double x = Left, step = Step;
 			string s;
 			S = "";
-			StreamWriter File = new StreamWriter(@"C:\Users\Илья\Documents\GitHub\DiffirentialCsharp\DiffirentialCsharp\Trapetion.txt");
+			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\Trapetion.txt");
 			File.WriteLine("x\ty\t||y-Y||");
 			int i = 1;
 			while (x < Right + Eps)
@@ -570,6 +614,9 @@ namespace DiffirentialCsharp
 						S += s;
 						//вывод изображения
 					}
+					s = "---------------------------------------------------------------\n";
+					File.Write(s);
+					S += s;
 				}
 				else
 					step /= 2;

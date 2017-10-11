@@ -31,10 +31,9 @@
 			this.components = new System.ComponentModel.Container();
 			this.textBox_startcondition = new System.Windows.Forms.TextBox();
 			this.Instruments = new System.Windows.Forms.Panel();
+			this.textBox_accuracy = new System.Windows.Forms.TextBox();
 			this.domainUpDown1 = new System.Windows.Forms.DomainUpDown();
 			this.button_calculate = new System.Windows.Forms.Button();
-			this.checkBox_yvertex = new System.Windows.Forms.CheckBox();
-			this.checkBox_xvertex = new System.Windows.Forms.CheckBox();
 			this.textBox_step = new System.Windows.Forms.TextBox();
 			this.textBox_rightborder = new System.Windows.Forms.TextBox();
 			this.textBox_leftborder = new System.Windows.Forms.TextBox();
@@ -48,7 +47,7 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.textBox_accuracy = new System.Windows.Forms.TextBox();
+			this.checkBox_yvertex = new System.Windows.Forms.CheckBox();
 			this.Instruments.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.SuspendLayout();
@@ -67,7 +66,6 @@
 			this.Instruments.Controls.Add(this.domainUpDown1);
 			this.Instruments.Controls.Add(this.button_calculate);
 			this.Instruments.Controls.Add(this.checkBox_yvertex);
-			this.Instruments.Controls.Add(this.checkBox_xvertex);
 			this.Instruments.Controls.Add(this.textBox_step);
 			this.Instruments.Controls.Add(this.textBox_rightborder);
 			this.Instruments.Controls.Add(this.textBox_leftborder);
@@ -81,6 +79,14 @@
 			this.Instruments.Name = "Instruments";
 			this.Instruments.Size = new System.Drawing.Size(400, 437);
 			this.Instruments.TabIndex = 1;
+			// 
+			// textBox_accuracy
+			// 
+			this.textBox_accuracy.Location = new System.Drawing.Point(253, 338);
+			this.textBox_accuracy.Name = "textBox_accuracy";
+			this.textBox_accuracy.Size = new System.Drawing.Size(120, 20);
+			this.textBox_accuracy.TabIndex = 8;
+			this.textBox_accuracy.Visible = false;
 			// 
 			// domainUpDown1
 			// 
@@ -104,26 +110,6 @@
 			this.button_calculate.Text = "Вычислить";
 			this.button_calculate.UseVisualStyleBackColor = true;
 			this.button_calculate.Click += new System.EventHandler(this.button_calculate_Click);
-			// 
-			// checkBox_yvertex
-			// 
-			this.checkBox_yvertex.AutoSize = true;
-			this.checkBox_yvertex.Location = new System.Drawing.Point(268, 110);
-			this.checkBox_yvertex.Name = "checkBox_yvertex";
-			this.checkBox_yvertex.Size = new System.Drawing.Size(76, 17);
-			this.checkBox_yvertex.TabIndex = 5;
-			this.checkBox_yvertex.Text = "y - Вектор";
-			this.checkBox_yvertex.UseVisualStyleBackColor = true;
-			// 
-			// checkBox_xvertex
-			// 
-			this.checkBox_xvertex.AutoSize = true;
-			this.checkBox_xvertex.Location = new System.Drawing.Point(268, 63);
-			this.checkBox_xvertex.Name = "checkBox_xvertex";
-			this.checkBox_xvertex.Size = new System.Drawing.Size(76, 17);
-			this.checkBox_xvertex.TabIndex = 5;
-			this.checkBox_xvertex.Text = "x - Вектор";
-			this.checkBox_xvertex.UseVisualStyleBackColor = true;
 			// 
 			// textBox_step
 			// 
@@ -244,13 +230,15 @@
 			this.label1.TabIndex = 4;
 			this.label1.Text = "Результат";
 			// 
-			// textBox_accuracy
+			// checkBox_yvertex
 			// 
-			this.textBox_accuracy.Location = new System.Drawing.Point(253, 338);
-			this.textBox_accuracy.Name = "textBox_accuracy";
-			this.textBox_accuracy.Size = new System.Drawing.Size(120, 20);
-			this.textBox_accuracy.TabIndex = 8;
-			this.textBox_accuracy.Visible = false;
+			this.checkBox_yvertex.AutoSize = true;
+			this.checkBox_yvertex.Location = new System.Drawing.Point(267, 60);
+			this.checkBox_yvertex.Name = "checkBox_yvertex";
+			this.checkBox_yvertex.Size = new System.Drawing.Size(76, 17);
+			this.checkBox_yvertex.TabIndex = 5;
+			this.checkBox_yvertex.Text = "y - Вектор";
+			this.checkBox_yvertex.UseVisualStyleBackColor = true;
 			// 
 			// Form1
 			// 
@@ -281,8 +269,6 @@
 		private System.Windows.Forms.Label label_rightborder;
 		private System.Windows.Forms.Label label_leftborder;
 		private System.Windows.Forms.TextBox textBox_leftborder;
-		private System.Windows.Forms.CheckBox checkBox_yvertex;
-		private System.Windows.Forms.CheckBox checkBox_xvertex;
 		private System.Windows.Forms.TextBox textBox_step;
 		private System.Windows.Forms.TextBox textBox_rightborder;
 		private System.Windows.Forms.Button button_calculate;
@@ -293,6 +279,7 @@
 		private System.Windows.Forms.RichTextBox richTextBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textBox_accuracy;
+		private System.Windows.Forms.CheckBox checkBox_yvertex;
 	}
 }
 
