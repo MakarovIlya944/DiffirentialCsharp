@@ -85,10 +85,10 @@ namespace DiffirentialCsharp
 		{
 			panel1.Visible = false;
 			OpenGLWindow.Visible = false;
-			if (checkBox_yvertex.Checked)
+			/*if (checkBox_yvertex.Checked)
 				OpenGLWindow.Visible = true;
 			else
-				panel1.Visible = true;
+				panel1.Visible = true;*/
 
 			string[] s = textBox_startcondition.Text.Split(';');
 			Vertex Start = new Vertex(s.Length);
@@ -475,14 +475,15 @@ namespace DiffirentialCsharp
 		public double Left, Right, Step;
 		public Vertex Start;
 		public double Eps = 1E-5;
+		public double[] Points = new double[12] { 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1 };
 		public abstract Vertex Exact(double x);
 		public Vertex RightPart(double x, Vertex y)
 		{
 			Vertex a = new Vertex(y);
-			a.v[0] = a.v[0] / x + x;
-			//a.v[0] = y.y - x;
-			//a.v[1] = y.x;
-			//a.v[2] = 2 * y.y;
+			//a.v[0] = a.v[0] / x + x;
+			a.v[0] = y.x*y.y + x;
+			a.v[1] = -y.x*y.x + x*x;
+			//a.v[2] = y.z;
 			return a;
 		}
 	}
@@ -505,11 +506,11 @@ namespace DiffirentialCsharp
 		}
 		public override Vertex Exact(double x)
 		{//точное значение функции
-			Vertex a = new Vertex(1);
-			a.v[0] = x * x;
-			//a.v[0] = 1;
-			//a.v[1] = x;
-			//a.v[2] = x * x;
+			Vertex a = new Vertex(Vertex.Dimension);
+			//a.v[0] = x * x;
+			a.v[0] = Math.Sin(x) + 2*Math.Cos(x);
+			a.v[1] = Math.Cos(x)+ 0.5 - Math.Cos(2*x)/2;
+			//a.v[2] = Math.Cos(x);
 			return a;
 		}
 		public List<PointSolve> Eiler(out string S)
@@ -520,9 +521,9 @@ namespace DiffirentialCsharp
 			double x = Left;
 			string s = "";
 			S = "";
-			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\Eiler.txt");
-			File.WriteLine("x\ty\t||y-Y||");
-			int i = 1;
+			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\Eiler.csv");
+			File.WriteLine("x;y");
+			int i = 1, k = 0;
 			while (x < Right + Eps)
 			{
 				ans.Add(new PointSolve(x, eiler));
@@ -533,13 +534,15 @@ namespace DiffirentialCsharp
 						tmp = Math.Abs(Exact(x).x - eiler.x);
 					s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x,eiler.v[j],tmp);
 					//вывод в файл
-					File.Write(s);
+					if(Math.Abs(x-Points[k])< 1E-2*Step)
+						File.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, eiler.v[j]);
 					//вывод в приложении
 					S += s;
 					//вывод изображения
 				}
 				s = "---------------------------------------------------------------\n";
-				File.Write(s);
+				if (Math.Abs(x - Points[k]) < 1E-2 * Step)
+					k++;
 				S += s;
 				eiler = eiler + Step * RightPart(x, eiler);
 				x = Left + i * Step;
@@ -556,9 +559,9 @@ namespace DiffirentialCsharp
 			double x = Left;
 			string s;
 			S = "";
-			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\RungeKutta.txt");
-			File.WriteLine("x\ty\t||y-Y||");
-			int i = 1;
+			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\RungeKutta.csv");
+			File.WriteLine("x;y");
+			int i = 1,k=0;
 			while (x < Right + Eps)
 			{
 				for (int j = 0; j < Vertex.Dimension; j++)
@@ -568,13 +571,15 @@ namespace DiffirentialCsharp
 						tmp = Math.Abs(Exact(x).x - runge.x);
 					s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, runge.v[j], tmp);
 					//вывод в файл
-					File.Write(s);
+					if (Math.Abs(x - Points[k]) < 1E-2 * Step)
+						File.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, runge.v[j]);
 					//вывод в приложении
 					S += s;
 					//вывод изображения
 				}
 				s = "---------------------------------------------------------------\n";
-				File.Write(s);
+				if (Math.Abs(x - Points[k]) < 1E-2 * Step)
+					k++;
 				S += s;
 				k1 = Step * RightPart(x, runge);
 				k2 = Step * RightPart(x + Step / 2, runge + k1 * 0.5);
@@ -592,9 +597,11 @@ namespace DiffirentialCsharp
 			double x = Left, step = Step;
 			string s;
 			S = "";
-			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\Trapetion.txt");
-			File.WriteLine("x\ty\t||y-Y||");
-			int i = 1;
+			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\Trapetion.csv");
+			File.WriteLine("x;y");
+			for (int j = 0; j < Vertex.Dimension; j++)
+				File.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, correct.v[j]);
+			int i = 1,k=1;
 			while (x < Right + Eps)
 			{
 				eiler = prev + step * RightPart(x, prev);
@@ -609,13 +616,15 @@ namespace DiffirentialCsharp
 						double tmp = (Exact(x) - correct).NormaEvklid();
 						s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, correct.v[j], tmp);
 						//вывод в файл
-						File.Write(s);
+						if (Math.Abs(x - Points[k]) < 1E-2 * Step)
+							File.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, correct.v[j]);
 						//вывод в приложении
 						S += s;
 						//вывод изображения
 					}
 					s = "---------------------------------------------------------------\n";
-					File.Write(s);
+					if (Math.Abs(x - Points[k]) < 1E-2 * Step)
+						k++;
 					S += s;
 				}
 				else

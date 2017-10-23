@@ -34,6 +34,7 @@
 			this.textBox_accuracy = new System.Windows.Forms.TextBox();
 			this.domainUpDown1 = new System.Windows.Forms.DomainUpDown();
 			this.button_calculate = new System.Windows.Forms.Button();
+			this.checkBox_yvertex = new System.Windows.Forms.CheckBox();
 			this.textBox_step = new System.Windows.Forms.TextBox();
 			this.textBox_rightborder = new System.Windows.Forms.TextBox();
 			this.textBox_leftborder = new System.Windows.Forms.TextBox();
@@ -47,7 +48,6 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.checkBox_yvertex = new System.Windows.Forms.CheckBox();
 			this.Instruments.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.SuspendLayout();
@@ -111,12 +111,23 @@
 			this.button_calculate.UseVisualStyleBackColor = true;
 			this.button_calculate.Click += new System.EventHandler(this.button_calculate_Click);
 			// 
+			// checkBox_yvertex
+			// 
+			this.checkBox_yvertex.AutoSize = true;
+			this.checkBox_yvertex.Location = new System.Drawing.Point(267, 60);
+			this.checkBox_yvertex.Name = "checkBox_yvertex";
+			this.checkBox_yvertex.Size = new System.Drawing.Size(76, 17);
+			this.checkBox_yvertex.TabIndex = 5;
+			this.checkBox_yvertex.Text = "y - Вектор";
+			this.checkBox_yvertex.UseVisualStyleBackColor = true;
+			// 
 			// textBox_step
 			// 
 			this.textBox_step.Location = new System.Drawing.Point(15, 210);
 			this.textBox_step.Name = "textBox_step";
 			this.textBox_step.Size = new System.Drawing.Size(200, 20);
 			this.textBox_step.TabIndex = 0;
+			this.textBox_step.Text = "0,01";
 			this.textBox_step.TextChanged += new System.EventHandler(this.textBoxleftborder_TextChanged);
 			// 
 			// textBox_rightborder
@@ -125,6 +136,7 @@
 			this.textBox_rightborder.Name = "textBox_rightborder";
 			this.textBox_rightborder.Size = new System.Drawing.Size(200, 20);
 			this.textBox_rightborder.TabIndex = 0;
+			this.textBox_rightborder.Text = "1";
 			this.textBox_rightborder.TextChanged += new System.EventHandler(this.textBoxleftborder_TextChanged);
 			// 
 			// textBox_leftborder
@@ -133,6 +145,7 @@
 			this.textBox_leftborder.Name = "textBox_leftborder";
 			this.textBox_leftborder.Size = new System.Drawing.Size(200, 20);
 			this.textBox_leftborder.TabIndex = 0;
+			this.textBox_leftborder.Text = "0";
 			this.textBox_leftborder.TextChanged += new System.EventHandler(this.textBoxleftborder_TextChanged);
 			// 
 			// label_step
@@ -229,16 +242,6 @@
 			this.label1.Size = new System.Drawing.Size(59, 13);
 			this.label1.TabIndex = 4;
 			this.label1.Text = "Результат";
-			// 
-			// checkBox_yvertex
-			// 
-			this.checkBox_yvertex.AutoSize = true;
-			this.checkBox_yvertex.Location = new System.Drawing.Point(267, 60);
-			this.checkBox_yvertex.Name = "checkBox_yvertex";
-			this.checkBox_yvertex.Size = new System.Drawing.Size(76, 17);
-			this.checkBox_yvertex.TabIndex = 5;
-			this.checkBox_yvertex.Text = "y - Вектор";
-			this.checkBox_yvertex.UseVisualStyleBackColor = true;
 			// 
 			// Form1
 			// 
