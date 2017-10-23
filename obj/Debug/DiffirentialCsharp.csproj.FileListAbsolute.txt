@@ -28,16 +28,3 @@ C:\Users\Вифлиерон\Documents\GitHub\obj\Debug\DiffirentialCsharp.csproj
 C:\Users\Вифлиерон\Documents\GitHub\obj\Debug\DiffirentialCsharp.Form1.resources
 C:\Users\Вифлиерон\Documents\GitHub\obj\Debug\DiffirentialCsharp.Properties.Resources.resources
 C:\Users\Вифлиерон\Documents\GitHub\obj\Debug\DiffirentialCsharp.csproj.GenerateResource.Cache
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\bin\Debug\DiffirentialCsharp.exe.config
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\bin\Debug\DiffirentialCsharp.exe
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\bin\Debug\DiffirentialCsharp.pdb
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\bin\Debug\Tao.FreeGlut.xml
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\bin\Debug\Tao.OpenGl.xml
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\bin\Debug\Tao.Platform.Windows.xml
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.csprojResolveAssemblyReference.cache
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.Form1.resources
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.Properties.Resources.resources
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.csproj.GenerateResource.Cache
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.csproj.CoreCompileInputs.cache
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.exe
-C:\Users\i.makarov.2015\Source\Repos\DiffirentialCsharp\obj\Debug\DiffirentialCsharp.pdb
