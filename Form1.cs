@@ -12,7 +12,6 @@ using Tao.OpenGl;
 using Tao.Platform.Windows;
 using System.IO;
 
-
 namespace DiffirentialCsharp
 {
 	public partial class Form1 : Form
@@ -90,6 +89,7 @@ namespace DiffirentialCsharp
 			else
 				panel1.Visible = true;*/
 
+
 			string[] s = textBox_startcondition.Text.Split(';');
 			Vertex Start = new Vertex(s.Length);
 			for (int i = 0; i < s.Length; i++)
@@ -136,11 +136,16 @@ namespace DiffirentialCsharp
 			for (int i = 0; i < num - 1; i++)
 			{
 				Pen p = new Pen(Color.FromArgb(0, (int)(255 * ((float)(i + 1) / num)), (int)(255 * ((float)(i + 1) / num))));
-				g.DrawLine(p, kx * i + 5, panel1.Height - ky * (float)Net[i].y.v[0], kx * (i + 1) + 5, panel1.Height - ky * (float)Net[i+1].y.v[0]);
+				g.DrawLine(p, kx * i + 5, panel1.Height - ky * (float)Net[i].y.v[0], kx * (i + 1) + 5, panel1.Height - ky * (float)Net[i + 1].y.v[0]);
 			}
 		}
 
-		private void MaxMinPointSolve(out double min,out double max)
+		private void textBox1_TextChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void MaxMinPointSolve(out double min, out double max)
 		{
 			min = Net[0].y.x; max = min;
 			foreach (var tmp in Net)
@@ -332,7 +337,7 @@ namespace DiffirentialCsharp
 
 		public Vertex(int k)
 		{
-			Dimension=k;
+			Dimension = k;
 			v = new double[Dimension];
 			for (int i = 0; i < Dimension; i++)
 				v[i] = 1;
@@ -464,7 +469,7 @@ namespace DiffirentialCsharp
 
 		public void NormirovkaEvklid()
 		{
-			double Norma = 1/this.NormaEvklid();
+			double Norma = 1 / this.NormaEvklid();
 			for (int i = 0; i < Dimension; i++)
 				v[i] *= Norma;
 		}
@@ -475,15 +480,15 @@ namespace DiffirentialCsharp
 		public double Left, Right, Step;
 		public Vertex Start;
 		public double Eps = 1E-5;
-		public double[] Points = new double[12] { 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1 };
 		public abstract Vertex Exact(double x);
+		public double[] Points = new double[12] { 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1 };
 		public Vertex RightPart(double x, Vertex y)
 		{
 			Vertex a = new Vertex(y);
-			//a.v[0] = a.v[0] / x + x;
-			a.v[0] = y.x*y.y + x;
-			a.v[1] = -y.x*y.x + x*x;
-			//a.v[2] = y.z;
+			//a.v[0] = y.x / x + x;
+			a.v[0] = -100 * y.x + 100 * y.y + 100 * y.z;
+			a.v[1] = -99 * y.y;
+			a.v[2] = y.z;
 			return a;
 		}
 	}
@@ -508,9 +513,9 @@ namespace DiffirentialCsharp
 		{//точное значение функции
 			Vertex a = new Vertex(Vertex.Dimension);
 			//a.v[0] = x * x;
-			a.v[0] = Math.Sin(x) + 2*Math.Cos(x);
-			a.v[1] = Math.Cos(x)+ 0.5 - Math.Cos(2*x)/2;
-			//a.v[2] = Math.Cos(x);
+			a.v[0] = 1;
+			a.v[1] = x;
+			a.v[2] = x * x;
 			return a;
 		}
 		public List<PointSolve> Eiler(out string S)
@@ -521,34 +526,37 @@ namespace DiffirentialCsharp
 			double x = Left;
 			string s = "";
 			S = "";
-			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\Eiler.csv");
-			File.WriteLine("x;y");
+			string path = Directory.GetCurrentDirectory() + @"\Eiler.csv";
+			StreamWriter F = File.AppendText(path);
+			F.WriteLine("x;y");
 			int i = 1, k = 0;
 			while (x < Right + Eps)
 			{
 				ans.Add(new PointSolve(x, eiler));
-				for(int j=0;j<Vertex.Dimension;j++)
+				for (int j = 0; j < Vertex.Dimension; j++)
 				{
 					double tmp = (Exact(x) - eiler).NormaEvklid();
 					if (Vertex.Dimension == 1)
 						tmp = Math.Abs(Exact(x).x - eiler.x);
-					s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x,eiler.v[j],tmp);
+					s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, eiler.v[j], tmp);
 					//вывод в файл
-					if(Math.Abs(x-Points[k])< 1E-2*Step)
-						File.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, eiler.v[j]);
+					if (Math.Abs(x - Points[k]) < 1E-2 * Step)
+						F.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, eiler.v[j]);
 					//вывод в приложении
 					S += s;
 					//вывод изображения
 				}
-				s = "---------------------------------------------------------------\n";
 				if (Math.Abs(x - Points[k]) < 1E-2 * Step)
 					k++;
+				s = "---------------------------------------------------------------\n";
+				//F.Write(s);
 				S += s;
 				eiler = eiler + Step * RightPart(x, eiler);
 				x = Left + i * Step;
 				i++;
 			}
-			File.Close();
+			F.WriteLine("\n");
+			F.Close();
 			return ans;
 		}
 
@@ -559,9 +567,10 @@ namespace DiffirentialCsharp
 			double x = Left;
 			string s;
 			S = "";
-			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\RungeKutta.csv");
-			File.WriteLine("x;y");
-			int i = 1,k=0;
+			string path = Directory.GetCurrentDirectory() + @"\RungeKutta.csv";
+			StreamWriter F = File.AppendText(path);
+			F.WriteLine("x;y;||y-Y||");
+			int i = 1, k = 0;
 			while (x < Right + Eps)
 			{
 				for (int j = 0; j < Vertex.Dimension; j++)
@@ -572,7 +581,8 @@ namespace DiffirentialCsharp
 					s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, runge.v[j], tmp);
 					//вывод в файл
 					if (Math.Abs(x - Points[k]) < 1E-2 * Step)
-						File.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, runge.v[j]);
+						F.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, runge.v[j]);
+
 					//вывод в приложении
 					S += s;
 					//вывод изображения
@@ -588,7 +598,9 @@ namespace DiffirentialCsharp
 				x = Left + i * Step;
 				i++;
 			}
-			File.Close();
+			F.WriteLine("\n");
+
+			F.Close();
 		}
 
 		public void Trapetion(out string S, double accuracy)
@@ -597,18 +609,24 @@ namespace DiffirentialCsharp
 			double x = Left, step = Step;
 			string s;
 			S = "";
-			StreamWriter File = new StreamWriter(Directory.GetCurrentDirectory()+@"\Trapetion.csv");
-			File.WriteLine("x;y");
+			string path = Directory.GetCurrentDirectory() + @"\Trapetion.csv";
+			string path1 = Directory.GetCurrentDirectory() + @"\Trapetion_dots.csv";
+			StreamWriter F = File.AppendText(path);
+			StreamWriter F1 = File.AppendText(path1);
+			F.WriteLine("x;y;||y-Y||");
 			for (int j = 0; j < Vertex.Dimension; j++)
-				File.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, correct.v[j]);
-			int i = 1,k=1;
+			{
+				F.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0};", x, Start.v[j]);
+				F1.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0};", x, Start.v[j]);
+			}
+			int i = 1, k = 1;
 			while (x < Right + Eps)
 			{
 				eiler = prev + step * RightPart(x, prev);
 				correct = prev + (step / 2) * (RightPart(x, prev) + RightPart(x + step, eiler));
 				if ((correct - eiler).NormaEvklid() < accuracy)
 				{
-					x = Left + i * Step;
+					x = Left + i * step;
 					prev = correct;
 					i++;
 					for (int j = 0; j < Vertex.Dimension; j++)
@@ -616,225 +634,25 @@ namespace DiffirentialCsharp
 						double tmp = (Exact(x) - correct).NormaEvklid();
 						s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, correct.v[j], tmp);
 						//вывод в файл
-						if (Math.Abs(x - Points[k]) < 1E-2 * Step)
-							File.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, correct.v[j]);
+						F1.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, correct.v[j]);
+						if (Math.Abs(x - Points[k]) < 1E-2 * step)
+							F.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, correct.v[j]);
 						//вывод в приложении
 						S += s;
 						//вывод изображения
 					}
 					s = "---------------------------------------------------------------\n";
-					if (Math.Abs(x - Points[k]) < 1E-2 * Step)
+					if (Math.Abs(x - Points[k]) < 1E-2 * step)
 						k++;
 					S += s;
+
 				}
 				else
 					step /= 2;
 			}
-			File.Close();
+			F.WriteLine("\n");
+			F.Close();
+			F1.Close();
 		}
 	}
-
-
-	/*
-	public class DifferentialEquation
-	{
-
-		//Function:X->Y
-		public bool IsXVertex = false;
-		public bool IsYVertex = false;
-		public bool IsUniformStep = true;
-
-		public DifferentialEquation()
-		{
-
-		}
-
-		public DifferentialEquation(int netnum, float leftborder, float rightborder, float startcondition)
-		{
-			NetNum = netnum;
-			float length = leftborder - leftborder;
-			Step = length / NetNum;
-			Net = new List<float>(NetNum);
-			Net[0] = leftborder;
-			for (int i = 1; i < NetNum; i++)
-				Net[i] = leftborder + Step * i;
-		}
-
-		public DifferentialEquation(Vertex step, Vertex leftborder, Vertex rightborder, Vertex startcondition, int dimension)
-		{
-			Dimension = dimension;
-			IsYVertex = true;
-			IsXVertex = true;
-			LeftBorderV = leftborder;
-			RightBorderV = rightborder;
-			StartConditionV = startcondition;
-			StepV = step;
-			NetV = new List<Vertex>((int)((rightborder.x - leftborder.x) / step.x) + 1);
-			NetNum = 0;
-			Vertex tmp = leftborder, right = rightborder - new Vertex(dimension) * 1E-3;
-			while (tmp.SmallerAllComponents(right))
-			{
-				NetV[NetNum] = tmp;
-				NetNum++;//----------------------------------------------------------------------------ошибочка
-				Vertex t = leftborder + StepV * NetNum;
-				tmp = t;
-			}
-			NetV[NetNum] = rightborder;
-			NetFunctionV = new List<Vertex>(++NetNum);
-		}
-
-		public DifferentialEquation(float step, float leftborder, float rightborder, float startcondition)
-		{
-			LeftBorder = leftborder;
-			RightBorder = rightborder;
-			StartCondition = startcondition;
-			Step = step;
-			Net = new List<float>();
-			NetFunction = new List<float>();
-			NetNum = 0;
-			float tmp = leftborder;
-			while (tmp < rightborder - 1E-3)
-			{
-				Net.Add(tmp);
-				NetNum++;
-				tmp = leftborder + NetNum * Step;
-				NetFunction.Add(0);
-			}
-			Net.Add(rightborder);
-			NetFunction.Add(0);
-		}
-
-		public void EilerV()
-		{
-			NetFunctionV[0] = StartConditionV;//началное условие
-			for (int i = 1; i < NetNum; i++)
-				NetFunctionV[i] = NetFunctionV[i - 1] + Function(NetV[i - 1], NetFunctionV[i - 1]) * StepV;
-		}
-
-		/*public void PrintNetFunctionV()
-		{
-			printf_s("X\t\tY\t\t||Y-Y(ac)||\n");
-			for (int i(0); i < NetNum; i++)
-			{
-				for (int j(0); j < 3; j++)
-				{
-					printf_s("%E\t", NetV[i][j]);
-					printf_s("%E\t", NetFunctionV[i][j]);
-					printf_s("%E\n", abs(NetFunctionV[i][j] - AccurateFunction(NetV[i])[j]));
-				}
-				printf_s("------------------------------------------------\n");
-			}
-			printf_s("\n");
-		}
-
-		public void Eiler()
-		{
-			NetFunction[0] = StartCondition;//началное условие
-			for (int i = 1; i < NetNum; i++)
-				NetFunction[i] = NetFunction[i - 1] + Step * Function(Net[i - 1], NetFunction[i - 1]);
-		}
-
-		/*public void PrintNetFunction()
-		{
-			printf_s("X\t\tY\t\t||Y-Y(ac)||\n");
-			for (int i(0); i < NetNum; i++)
-			{
-				printf_s("%E\t", Net[i]);
-				printf_s("%E\t", NetFunction[i]);
-				printf_s("%E\n", abs(NetFunction[i] - AccurateFunction(Net[i])));
-			}
-			printf_s("\n");
-		}
-
-		public void Trapetion(float epsilon)
-		{
-			float eiler, corect, step = Step;
-			NetFunction.Add(StartCondition);
-			Net.Add(LeftBorder);
-			int i = 0;
-			while (Net[i] < RightBorder + epsilon)
-			{
-				eiler = NetFunction[i] + step * Function(Net[i], NetFunction[i]);
-				corect = NetFunction[i] + step / 2 * (Function(Net[i], NetFunction[i]) + Function(Net[i] + step, eiler));
-				if (Math.Abs(corect - eiler) < epsilon)
-				{
-					Net.Add(Net[i] + step);
-					NetFunction.Add(corect);
-					i++;
-				}
-				else
-					step /= 2;
-			}
-
-			NetNum = i;
-			Step = -1;
-			IsUniformStep = false;
-		}
-
-		public void RungeKutta()
-		{
-			float k1, k2, k3;
-			NetFunction[0] = StartCondition;
-			for (int i = 1; i < NetNum; i++)
-			{
-				k1 = Step * Function(Net[i], NetFunction[i - 1]);
-				k2 = Step * Function(Net[i] + Step / 2, NetFunction[i - 1] + k1 / 2);
-				k3 = Step * Function(Net[i] + Step, NetFunction[i - 1] - k1 + 2 * k2);
-				NetFunction[i] = NetFunction[i - 1] + (k1 + 4 * k2 + k3) / 6;
-			}
-		}
-
-		public List<float> GetNet()
-		{
-			return Net;
-		}
-
-		public List<float> GetNetFunction()
-		{
-			return NetFunction;
-		}
-
-		public int GetNetNum()
-		{
-			return NetNum;
-		}
-
-		private int NetNum;
-		private int Dimension = 0;
-
-		private Vertex LeftBorderV = new Vertex(), RightBorderV = new Vertex();
-		private Vertex StepV = new Vertex();
-		private List<Vertex> NetV = new List<Vertex>();
-		private List<Vertex> NetFunctionV = new List<Vertex>();
-		private Vertex StartConditionV = new Vertex();
-
-		private float LeftBorder, RightBorder;
-		private float Step;
-		private List<float> Net = new List<float>();
-		private List<float> NetFunction = new List<float>();
-		private float StartCondition;
-
-		private Vertex Function(Vertex x, Vertex y)//Правая чaсть 
-		{
-			float[] A = new float[9] { 3, -2, -1, 3, -4, -3, 2, -4, 0 };
-			return y*A;
-		}
-
-		private float Function(float x, float y)//Правая чaсть 
-		{
-			return y / x + x;
-		}
-
-		private Vertex AccurateFunction(Vertex x)
-		{
-			float[] A = new float[9] { 3, -2, -1, 3, -4, -3, 2, -4, 0 };
-			return x*A;
-		}
-
-		private float AccurateFunction(float x)
-		{
-			return x * x;
-		}
-	}
-*/
 }
