@@ -48,13 +48,20 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+			this.выборЛабыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.лабараторная1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.лабараторная2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.buttonOpenfile = new System.Windows.Forms.Button();
 			this.Instruments.SuspendLayout();
 			this.panel1.SuspendLayout();
+			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// textBox_startcondition
 			// 
-			this.textBox_startcondition.Location = new System.Drawing.Point(15, 60);
+			this.textBox_startcondition.Location = new System.Drawing.Point(15, 66);
 			this.textBox_startcondition.Name = "textBox_startcondition";
 			this.textBox_startcondition.Size = new System.Drawing.Size(200, 20);
 			this.textBox_startcondition.TabIndex = 0;
@@ -62,6 +69,7 @@
 			// Instruments
 			// 
 			this.Instruments.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.Instruments.Controls.Add(this.buttonOpenfile);
 			this.Instruments.Controls.Add(this.textBox_accuracy);
 			this.Instruments.Controls.Add(this.domainUpDown1);
 			this.Instruments.Controls.Add(this.button_calculate);
@@ -75,14 +83,14 @@
 			this.Instruments.Controls.Add(this.label_rightborder);
 			this.Instruments.Controls.Add(this.label_leftborder);
 			this.Instruments.Controls.Add(this.label_Instruments);
-			this.Instruments.Location = new System.Drawing.Point(12, 12);
+			this.Instruments.Location = new System.Drawing.Point(12, 27);
 			this.Instruments.Name = "Instruments";
-			this.Instruments.Size = new System.Drawing.Size(400, 437);
+			this.Instruments.Size = new System.Drawing.Size(400, 422);
 			this.Instruments.TabIndex = 1;
 			// 
 			// textBox_accuracy
 			// 
-			this.textBox_accuracy.Location = new System.Drawing.Point(253, 338);
+			this.textBox_accuracy.Location = new System.Drawing.Point(253, 296);
 			this.textBox_accuracy.Name = "textBox_accuracy";
 			this.textBox_accuracy.Size = new System.Drawing.Size(120, 20);
 			this.textBox_accuracy.TabIndex = 8;
@@ -93,7 +101,7 @@
 			this.domainUpDown1.Items.Add("Метод Рунге-Кутты");
 			this.domainUpDown1.Items.Add("Метод Трапеции (прогноз-коррекция)");
 			this.domainUpDown1.Items.Add("Метод Эйлера");
-			this.domainUpDown1.Location = new System.Drawing.Point(253, 311);
+			this.domainUpDown1.Location = new System.Drawing.Point(253, 269);
 			this.domainUpDown1.MinimumSize = new System.Drawing.Size(120, 0);
 			this.domainUpDown1.Name = "domainUpDown1";
 			this.domainUpDown1.Size = new System.Drawing.Size(120, 20);
@@ -103,7 +111,7 @@
 			// 
 			// button_calculate
 			// 
-			this.button_calculate.Location = new System.Drawing.Point(165, 411);
+			this.button_calculate.Location = new System.Drawing.Point(165, 390);
 			this.button_calculate.Name = "button_calculate";
 			this.button_calculate.Size = new System.Drawing.Size(73, 23);
 			this.button_calculate.TabIndex = 6;
@@ -114,7 +122,7 @@
 			// checkBox_yvertex
 			// 
 			this.checkBox_yvertex.AutoSize = true;
-			this.checkBox_yvertex.Location = new System.Drawing.Point(267, 60);
+			this.checkBox_yvertex.Location = new System.Drawing.Point(267, 66);
 			this.checkBox_yvertex.Name = "checkBox_yvertex";
 			this.checkBox_yvertex.Size = new System.Drawing.Size(76, 17);
 			this.checkBox_yvertex.TabIndex = 5;
@@ -123,35 +131,32 @@
 			// 
 			// textBox_step
 			// 
-			this.textBox_step.Location = new System.Drawing.Point(15, 210);
+			this.textBox_step.Location = new System.Drawing.Point(15, 216);
 			this.textBox_step.Name = "textBox_step";
 			this.textBox_step.Size = new System.Drawing.Size(200, 20);
 			this.textBox_step.TabIndex = 0;
 			this.textBox_step.Text = "0,01";
-			this.textBox_step.TextChanged += new System.EventHandler(this.textBoxleftborder_TextChanged);
 			// 
 			// textBox_rightborder
 			// 
-			this.textBox_rightborder.Location = new System.Drawing.Point(15, 160);
+			this.textBox_rightborder.Location = new System.Drawing.Point(15, 166);
 			this.textBox_rightborder.Name = "textBox_rightborder";
 			this.textBox_rightborder.Size = new System.Drawing.Size(200, 20);
 			this.textBox_rightborder.TabIndex = 0;
 			this.textBox_rightborder.Text = "1";
-			this.textBox_rightborder.TextChanged += new System.EventHandler(this.textBoxleftborder_TextChanged);
 			// 
 			// textBox_leftborder
 			// 
-			this.textBox_leftborder.Location = new System.Drawing.Point(15, 110);
+			this.textBox_leftborder.Location = new System.Drawing.Point(15, 116);
 			this.textBox_leftborder.Name = "textBox_leftborder";
 			this.textBox_leftborder.Size = new System.Drawing.Size(200, 20);
 			this.textBox_leftborder.TabIndex = 0;
 			this.textBox_leftborder.Text = "0";
-			this.textBox_leftborder.TextChanged += new System.EventHandler(this.textBoxleftborder_TextChanged);
 			// 
 			// label_step
 			// 
 			this.label_step.AutoSize = true;
-			this.label_step.Location = new System.Drawing.Point(15, 190);
+			this.label_step.Location = new System.Drawing.Point(15, 196);
 			this.label_step.Name = "label_step";
 			this.label_step.Size = new System.Drawing.Size(27, 13);
 			this.label_step.TabIndex = 4;
@@ -160,7 +165,7 @@
 			// label_startcondition
 			// 
 			this.label_startcondition.AutoSize = true;
-			this.label_startcondition.Location = new System.Drawing.Point(15, 40);
+			this.label_startcondition.Location = new System.Drawing.Point(15, 46);
 			this.label_startcondition.Name = "label_startcondition";
 			this.label_startcondition.Size = new System.Drawing.Size(106, 13);
 			this.label_startcondition.TabIndex = 3;
@@ -169,7 +174,7 @@
 			// label_rightborder
 			// 
 			this.label_rightborder.AutoSize = true;
-			this.label_rightborder.Location = new System.Drawing.Point(15, 140);
+			this.label_rightborder.Location = new System.Drawing.Point(15, 146);
 			this.label_rightborder.Name = "label_rightborder";
 			this.label_rightborder.Size = new System.Drawing.Size(89, 13);
 			this.label_rightborder.TabIndex = 2;
@@ -178,7 +183,7 @@
 			// label_leftborder
 			// 
 			this.label_leftborder.AutoSize = true;
-			this.label_leftborder.Location = new System.Drawing.Point(15, 90);
+			this.label_leftborder.Location = new System.Drawing.Point(15, 96);
 			this.label_leftborder.Name = "label_leftborder";
 			this.label_leftborder.Size = new System.Drawing.Size(77, 13);
 			this.label_leftborder.TabIndex = 1;
@@ -188,7 +193,7 @@
 			// 
 			this.label_Instruments.AutoSize = true;
 			this.label_Instruments.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.label_Instruments.Location = new System.Drawing.Point(162, 10);
+			this.label_Instruments.Location = new System.Drawing.Point(162, 16);
 			this.label_Instruments.Name = "label_Instruments";
 			this.label_Instruments.Size = new System.Drawing.Size(76, 13);
 			this.label_Instruments.TabIndex = 0;
@@ -243,6 +248,53 @@
 			this.label1.TabIndex = 4;
 			this.label1.Text = "Результат";
 			// 
+			// openFileDialog1
+			// 
+			this.openFileDialog1.FileName = "openFileDialog1";
+			this.openFileDialog1.Filter = "Тектовый файл| *.txt";
+			// 
+			// menuStrip1
+			// 
+			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.выборЛабыToolStripMenuItem});
+			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+			this.menuStrip1.Name = "menuStrip1";
+			this.menuStrip1.Size = new System.Drawing.Size(1291, 24);
+			this.menuStrip1.TabIndex = 5;
+			this.menuStrip1.Text = "menuStrip1";
+			// 
+			// выборЛабыToolStripMenuItem
+			// 
+			this.выборЛабыToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.лабараторная1ToolStripMenuItem,
+            this.лабараторная2ToolStripMenuItem});
+			this.выборЛабыToolStripMenuItem.Name = "выборЛабыToolStripMenuItem";
+			this.выборЛабыToolStripMenuItem.Size = new System.Drawing.Size(88, 20);
+			this.выборЛабыToolStripMenuItem.Text = "Выбор лабы";
+			// 
+			// лабараторная1ToolStripMenuItem
+			// 
+			this.лабараторная1ToolStripMenuItem.Name = "лабараторная1ToolStripMenuItem";
+			this.лабараторная1ToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+			this.лабараторная1ToolStripMenuItem.Text = "Лабараторная 1";
+			this.лабараторная1ToolStripMenuItem.Click += new System.EventHandler(this.лабараторная1ToolStripMenuItem_Click);
+			// 
+			// лабараторная2ToolStripMenuItem
+			// 
+			this.лабараторная2ToolStripMenuItem.Name = "лабараторная2ToolStripMenuItem";
+			this.лабараторная2ToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+			this.лабараторная2ToolStripMenuItem.Text = "Лабараторная 2";
+			// 
+			// buttonOpenfile
+			// 
+			this.buttonOpenfile.Location = new System.Drawing.Point(18, 390);
+			this.buttonOpenfile.Name = "buttonOpenfile";
+			this.buttonOpenfile.Size = new System.Drawing.Size(117, 23);
+			this.buttonOpenfile.TabIndex = 9;
+			this.buttonOpenfile.Text = "Открыть файл";
+			this.buttonOpenfile.UseVisualStyleBackColor = true;
+			this.buttonOpenfile.Click += new System.EventHandler(this.buttonOpenfile_Click);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -252,11 +304,15 @@
 			this.Controls.Add(this.richTextBox1);
 			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.Instruments);
+			this.Controls.Add(this.menuStrip1);
+			this.MainMenuStrip = this.menuStrip1;
 			this.Name = "Form1";
 			this.Text = "Дифференциальные уравнения";
 			this.Instruments.ResumeLayout(false);
 			this.Instruments.PerformLayout();
 			this.panel1.ResumeLayout(false);
+			this.menuStrip1.ResumeLayout(false);
+			this.menuStrip1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -283,6 +339,12 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textBox_accuracy;
 		private System.Windows.Forms.CheckBox checkBox_yvertex;
+		private System.Windows.Forms.OpenFileDialog openFileDialog1;
+		private System.Windows.Forms.MenuStrip menuStrip1;
+		private System.Windows.Forms.ToolStripMenuItem выборЛабыToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem лабараторная1ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem лабараторная2ToolStripMenuItem;
+		private System.Windows.Forms.Button buttonOpenfile;
 	}
 }
 

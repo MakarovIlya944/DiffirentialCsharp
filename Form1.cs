@@ -75,19 +75,14 @@ namespace DiffirentialCsharp
 
 		}
 
-		private void textBoxleftborder_TextChanged(object sender, EventArgs e)
-		{
-
-		}
-
 		private void button_calculate_Click(object sender, EventArgs e)
 		{
 			panel1.Visible = false;
 			OpenGLWindow.Visible = false;
-			/*if (checkBox_yvertex.Checked)
+			if (checkBox_yvertex.Checked)
 				OpenGLWindow.Visible = true;
 			else
-				panel1.Visible = true;*/
+				panel1.Visible = true;
 
 
 			string[] s = textBox_startcondition.Text.Split(';');
@@ -140,9 +135,54 @@ namespace DiffirentialCsharp
 			}
 		}
 
-		private void textBox1_TextChanged(object sender, EventArgs e)
+		private void лабараторная1ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			textBox_accuracy.Visible = true;
+			textBox_leftborder.Visible = true;
+			textBox_rightborder.Visible = true;
+			textBox_startcondition.Visible = true;
+			textBox_step.Visible = true;
+			label_leftborder.Visible = true;
+			label_rightborder.Visible = true;
+			label_startcondition.Visible = true;
+			label_step.Visible = true;
+			buttonOpenfile.Visible = false;
+		}
 
+		private void лабараторная2ToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			textBox_accuracy.Visible = false;
+			textBox_leftborder.Visible = false;
+			textBox_rightborder.Visible = false;
+			textBox_startcondition.Visible = false;
+			textBox_step.Visible = false;
+			label_leftborder.Visible = false;
+			label_rightborder.Visible = false;
+			label_startcondition.Visible = false;
+			label_step.Visible = false;
+			buttonOpenfile.Visible = true;
+		}
+
+		private void buttonOpenfile_Click(object sender, EventArgs e)
+		{
+			DialogResult res = openFileDialog1.ShowDialog();
+			// если файл выбран - и возвращен результат OK 
+			if (res == DialogResult.OK)
+			{
+				string url = openFileDialog1.FileName;
+				StreamReader F = new StreamReader(url, Encoding.Default);
+
+				string s = "";
+
+				DiagEq sys = new DiagEq();
+				sys.Init(F);
+				if (sys.Forward())
+					sys.Reverse(out s);
+
+				richTextBox1.Text += s;
+
+				F.Close();
+			}
 		}
 
 		private void MaxMinPointSolve(out double min, out double max)
@@ -653,6 +693,91 @@ namespace DiffirentialCsharp
 			F.WriteLine("\n");
 			F.Close();
 			F1.Close();
+		}
+	}
+
+	public class DiagEq
+	{
+		private int Dimension;
+		private double[,] a;
+		private double[] r;
+
+		public void Init(StreamReader F)
+		{
+			try {
+				string s = F.ReadLine();
+				Dimension = Convert.ToInt16(s);
+
+				a = new double[3, Dimension];
+				s = F.ReadLine();//снизу вверх по диагоналям считываем
+				string[] S = s.Split();
+				for (int i = 1; i < Dimension; i++)
+					a[0, i] = Convert.ToDouble(S[i-1]);
+				a[0, 0] = 0;
+
+
+				s = F.ReadLine();
+				S = s.Split();
+				for (int i = 0; i < Dimension; i++)
+					a[1, i] = Convert.ToDouble(S[i]);
+
+				s = F.ReadLine();
+				S = s.Split();
+				for (int i = 0; i < Dimension - 1; i++)
+					a[2, i] = Convert.ToDouble(S[i]);
+				a[2, Dimension - 1] = 0;
+
+
+				r = new double[Dimension];
+				s = F.ReadLine();
+				S = s.Split();
+				for (int i = 0; i < Dimension; i++)
+					r[i] = Convert.ToDouble(S[i]);
+			}
+			catch(FormatException)
+			{
+				MessageBox.Show("Ошибка типа!");
+			}
+		}
+
+		public bool Forward()
+		{
+			//2 - беты 1 - лямбда
+			a[2, 0] /= -a[1, 0];
+			a[1, 0] = r[0] / a[1, 0];
+			double tmp;
+			for (int i = 1;i<Dimension;i++)
+			{
+				tmp = a[1, i] + a[0, i] * a[2, i - 1];
+				if(Math.Abs(tmp) < 1E-20)
+				{
+					MessageBox.Show("Система не корректна");
+					return false;
+				}
+				a[2, i] /= -tmp;
+				if (Math.Abs(a[2, i]) > 1)
+				{
+					MessageBox.Show("Система не устойчива");
+					return false;
+				}
+				a[1, i] = (r[i] - a[0, i] * a[1, i - 1]) / tmp;
+			}
+			return true;
+		}
+
+		public void Reverse(out string S)
+		{
+			//2 - беты 1 - лямбда
+			//ответ в 0
+			a[0, Dimension - 1] = a[1, Dimension - 1];//х н = лямбда н 
+			S = "";
+			S += a[0, Dimension - 1].ToString() + '\n';
+			for (int i = Dimension - 2; i >= 0; i--)
+			{
+				a[0, i] = a[2, i] * a[0, i + 1] + a[1, i];
+				S += a[0, i].ToString() + '\n';
+			}
+			S = S.Reverse().ToString();
 		}
 	}
 }
