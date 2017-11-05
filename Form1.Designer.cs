@@ -31,6 +31,7 @@
 			this.components = new System.ComponentModel.Container();
 			this.textBox_startcondition = new System.Windows.Forms.TextBox();
 			this.Instruments = new System.Windows.Forms.Panel();
+			this.buttonOpenfile = new System.Windows.Forms.Button();
 			this.textBox_accuracy = new System.Windows.Forms.TextBox();
 			this.domainUpDown1 = new System.Windows.Forms.DomainUpDown();
 			this.button_calculate = new System.Windows.Forms.Button();
@@ -53,7 +54,6 @@
 			this.выборЛабыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.лабараторная1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.лабараторная2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.buttonOpenfile = new System.Windows.Forms.Button();
 			this.Instruments.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
@@ -87,6 +87,17 @@
 			this.Instruments.Name = "Instruments";
 			this.Instruments.Size = new System.Drawing.Size(400, 422);
 			this.Instruments.TabIndex = 1;
+			// 
+			// buttonOpenfile
+			// 
+			this.buttonOpenfile.Location = new System.Drawing.Point(146, 390);
+			this.buttonOpenfile.Name = "buttonOpenfile";
+			this.buttonOpenfile.Size = new System.Drawing.Size(117, 23);
+			this.buttonOpenfile.TabIndex = 9;
+			this.buttonOpenfile.Text = "Открыть файл";
+			this.buttonOpenfile.UseVisualStyleBackColor = true;
+			this.buttonOpenfile.Visible = false;
+			this.buttonOpenfile.Click += new System.EventHandler(this.buttonOpenfile_Click);
 			// 
 			// textBox_accuracy
 			// 
@@ -284,16 +295,7 @@
 			this.лабараторная2ToolStripMenuItem.Name = "лабараторная2ToolStripMenuItem";
 			this.лабараторная2ToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
 			this.лабараторная2ToolStripMenuItem.Text = "Лабараторная 2";
-			// 
-			// buttonOpenfile
-			// 
-			this.buttonOpenfile.Location = new System.Drawing.Point(18, 390);
-			this.buttonOpenfile.Name = "buttonOpenfile";
-			this.buttonOpenfile.Size = new System.Drawing.Size(117, 23);
-			this.buttonOpenfile.TabIndex = 9;
-			this.buttonOpenfile.Text = "Открыть файл";
-			this.buttonOpenfile.UseVisualStyleBackColor = true;
-			this.buttonOpenfile.Click += new System.EventHandler(this.buttonOpenfile_Click);
+			this.лабараторная2ToolStripMenuItem.Click += new System.EventHandler(this.лабараторная2ToolStripMenuItem_Click);
 			// 
 			// Form1
 			// 

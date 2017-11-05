@@ -79,10 +79,10 @@ namespace DiffirentialCsharp
 		{
 			panel1.Visible = false;
 			OpenGLWindow.Visible = false;
-			if (checkBox_yvertex.Checked)
+			/*if (checkBox_yvertex.Checked)
 				OpenGLWindow.Visible = true;
 			else
-				panel1.Visible = true;
+				panel1.Visible = true;*/
 
 
 			string[] s = textBox_startcondition.Text.Split(';');
@@ -137,7 +137,6 @@ namespace DiffirentialCsharp
 
 		private void лабараторная1ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			textBox_accuracy.Visible = true;
 			textBox_leftborder.Visible = true;
 			textBox_rightborder.Visible = true;
 			textBox_startcondition.Visible = true;
@@ -146,6 +145,9 @@ namespace DiffirentialCsharp
 			label_rightborder.Visible = true;
 			label_startcondition.Visible = true;
 			label_step.Visible = true;
+			button_calculate.Visible = true;
+			checkBox_yvertex.Visible = true;
+			domainUpDown1.Visible = true;
 			buttonOpenfile.Visible = false;
 		}
 
@@ -160,11 +162,15 @@ namespace DiffirentialCsharp
 			label_rightborder.Visible = false;
 			label_startcondition.Visible = false;
 			label_step.Visible = false;
+			button_calculate.Visible = false;
+			checkBox_yvertex.Visible = false;
+			domainUpDown1.Visible = false;
 			buttonOpenfile.Visible = true;
 		}
 
 		private void buttonOpenfile_Click(object sender, EventArgs e)
 		{
+			richTextBox1.Text = "";
 			DialogResult res = openFileDialog1.ShowDialog();
 			// если файл выбран - и возвращен результат OK 
 			if (res == DialogResult.OK)
@@ -526,8 +532,8 @@ namespace DiffirentialCsharp
 		{
 			Vertex a = new Vertex(y);
 			//a.v[0] = y.x / x + x;
-			a.v[0] = -100 * y.x + 100 * y.y + 100 * y.z;
-			a.v[1] = -99 * y.y;
+			a.v[0] = -1000 * y.x + 1000 * y.y + 1000 * y.z;
+			a.v[1] = -999 * y.y;
 			a.v[2] = y.z;
 			return a;
 		}
@@ -551,11 +557,11 @@ namespace DiffirentialCsharp
 		}
 		public override Vertex Exact(double x)
 		{//точное значение функции
-			Vertex a = new Vertex(Vertex.Dimension);
+			Vertex a = new Vertex();
 			//a.v[0] = x * x;
-			a.v[0] = 1;
-			a.v[1] = x;
-			a.v[2] = x * x;
+			a.v[0] = 1000*Math.Exp(-999*x) + 1000/1001*Math.Exp(x) - (999+1000/1001)*Math.Exp(-1000*x);
+			a.v[1] = Math.Exp(-999*x);
+			a.v[2] = Math.Exp(x);
 			return a;
 		}
 		public List<PointSolve> Eiler(out string S)
@@ -647,7 +653,7 @@ namespace DiffirentialCsharp
 		{
 			Vertex eiler = Start, correct = Start, prev = Start;
 			double x = Left, step = Step;
-			string s;
+			string s = "";
 			S = "";
 			string path = Directory.GetCurrentDirectory() + @"\Trapetion.csv";
 			string path1 = Directory.GetCurrentDirectory() + @"\Trapetion_dots.csv";
@@ -658,38 +664,49 @@ namespace DiffirentialCsharp
 			{
 				F.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0};", x, Start.v[j]);
 				F1.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0};", x, Start.v[j]);
+				S+= string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, correct.v[j], 0); 
 			}
 			int i = 1, k = 1;
 			while (x < Right + Eps)
 			{
 				eiler = prev + step * RightPart(x, prev);
 				correct = prev + (step / 2) * (RightPart(x, prev) + RightPart(x + step, eiler));
-				if ((correct - eiler).NormaEvklid() < accuracy)
+				if ((correct - eiler).NormaEvklid() > accuracy)
+					step /= 2;
+				//else if ((correct - eiler).NormaEvklid() < accuracy * 1E-2)
+				//	step *= 2;
+				else
 				{
 					x = Left + i * step;
 					prev = correct;
 					i++;
-					for (int j = 0; j < Vertex.Dimension; j++)
+					double tmp = (Exact(x) - correct).NormaEvklid();
+					s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, correct.v[0], tmp);
+					//вывод в файл
+					//F1.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, correct.v[0]);
+					if (Math.Abs(x - Points[k]) < 1E-2 * step)
+						F.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0};{2:0.00000000000000E+0}", x, correct.v[0], tmp);
+					//вывод в приложении
+					//S += s;
+					//вывод изображения
+					for (int j = 1; j < Vertex.Dimension; j++)
 					{
-						double tmp = (Exact(x) - correct).NormaEvklid();
-						s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, correct.v[j], tmp);
+						s = string.Format("{0:0.00000E+0}        {1:0.00000E+0}\n", x, correct.v[j], tmp);
 						//вывод в файл
-						F1.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, correct.v[j]);
+						//F1.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, correct.v[j]);
 						if (Math.Abs(x - Points[k]) < 1E-2 * step)
 							F.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0}", x, correct.v[j]);
 						//вывод в приложении
-						S += s;
+						//S += s;
 						//вывод изображения
 					}
 					s = "---------------------------------------------------------------\n";
 					if (Math.Abs(x - Points[k]) < 1E-2 * step)
 						k++;
-					S += s;
-
+					//S += s;
 				}
-				else
-					step /= 2;
 			}
+			S += "done";
 			F.WriteLine("\n");
 			F.Close();
 			F1.Close();
@@ -775,9 +792,8 @@ namespace DiffirentialCsharp
 			for (int i = Dimension - 2; i >= 0; i--)
 			{
 				a[0, i] = a[2, i] * a[0, i + 1] + a[1, i];
-				S += a[0, i].ToString() + '\n';
+				S = a[0, i].ToString() + '\n' + S;
 			}
-			S = S.Reverse().ToString();
 		}
 	}
 }
