@@ -16,6 +16,8 @@ namespace DiffirentialCsharp
 {
 	public partial class Form1 : Form
 	{
+		public string fileans;
+
 		List<PointSolve> Net = new List<PointSolve>();
 		//Для OpenGl
 		public int cube_ = 0, flour_ = 0, sphere_ = 0;
@@ -137,35 +139,25 @@ namespace DiffirentialCsharp
 
 		private void лабараторная1ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			textBox_leftborder.Visible = true;
-			textBox_rightborder.Visible = true;
-			textBox_startcondition.Visible = true;
-			textBox_step.Visible = true;
-			label_leftborder.Visible = true;
-			label_rightborder.Visible = true;
-			label_startcondition.Visible = true;
+			label_startcondition.Text = "Начальное условие";
 			label_step.Visible = true;
 			button_calculate.Visible = true;
 			checkBox_yvertex.Visible = true;
 			domainUpDown1.Visible = true;
 			buttonOpenfile.Visible = false;
+			buttonCreate.Visible = false;
 		}
 
 		private void лабараторная2ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			textBox_accuracy.Visible = false;
-			textBox_leftborder.Visible = false;
-			textBox_rightborder.Visible = false;
 			textBox_startcondition.Visible = false;
-			textBox_step.Visible = false;
-			label_leftborder.Visible = false;
-			label_rightborder.Visible = false;
-			label_startcondition.Visible = false;
-			label_step.Visible = false;
+			label_startcondition.Text = "Значение y(0,5) = ";
 			button_calculate.Visible = false;
 			checkBox_yvertex.Visible = false;
 			domainUpDown1.Visible = false;
 			buttonOpenfile.Visible = true;
+			buttonCreate.Visible = true;
 		}
 
 		private void buttonOpenfile_Click(object sender, EventArgs e)
@@ -187,7 +179,53 @@ namespace DiffirentialCsharp
 
 				richTextBox1.Text += s;
 
+				sys.GetString_01(out s, Convert.ToDouble(textBox_step.Text));
+				string path = Directory.GetCurrentDirectory() + @"\test5.csv";
+				StreamWriter T = File.AppendText(path);
+				T.WriteLine(s);
+
+				T.Close();
 				F.Close();
+			}
+		}
+
+		private void buttonCreate_Click(object sender, EventArgs e)
+		{
+			string S;
+
+			double h = Convert.ToDouble(textBox_step.Text);
+			double l = Convert.ToDouble(textBox_leftborder.Text);
+			double r = Convert.ToDouble(textBox_rightborder.Text);
+
+			CreateMatrix(l, r, h, out S);
+
+			if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+				return;
+			// получаем выбранный файл
+			string filename = saveFileDialog1.FileName;
+			fileans = filename;
+			// сохраняем текст в файл
+			System.IO.File.WriteAllText(filename, S);
+		}
+
+		private void CreateMatrix(double l, double r, double h, out string s)
+		{
+			s = "";
+			int n = (int)Math.Ceiling((r - l) / h);
+			s += (n+1).ToString() + Environment.NewLine;
+			for (int i = 1; i <= n; i++)
+				s += (1 - (l + i * h) * h).ToString()+" ";
+			s += Environment.NewLine;
+			for (int i = 0; i <= n; i++)
+				s += (-2 - h * h).ToString() + " ";
+			s += Environment.NewLine;
+			for (int i = 0; i < n; i++)
+				s += (1 + (l + i * h) * h).ToString() + " ";
+			s += Environment.NewLine;
+			for (int i = 0; i <= n; i++)
+			{
+				var x = l + i * h;
+				s += (2 * h * h * (x*x+1)*Math.Sin(x)).ToString() + " ";
 			}
 		}
 
@@ -794,6 +832,15 @@ namespace DiffirentialCsharp
 				a[0, i] = a[2, i] * a[0, i + 1] + a[1, i];
 				S = a[0, i].ToString() + '\n' + S;
 			}
+			S += '\n' + Math.Abs(-0.5 * Math.Cos(0.5) - a[0,0]).ToString();
+		}
+
+		public void GetString_01(out string S, double h)
+		{
+			S = "";
+			int n = (int)(0.05 / h);
+			for (int i = 0; i < 11; i++)
+				S += a[0, i].ToString() + '\n';
 		}
 	}
 }

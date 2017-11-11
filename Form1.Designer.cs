@@ -31,6 +31,7 @@
 			this.components = new System.ComponentModel.Container();
 			this.textBox_startcondition = new System.Windows.Forms.TextBox();
 			this.Instruments = new System.Windows.Forms.Panel();
+			this.buttonCreate = new System.Windows.Forms.Button();
 			this.buttonOpenfile = new System.Windows.Forms.Button();
 			this.textBox_accuracy = new System.Windows.Forms.TextBox();
 			this.domainUpDown1 = new System.Windows.Forms.DomainUpDown();
@@ -54,6 +55,7 @@
 			this.выборЛабыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.лабараторная1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.лабараторная2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.Instruments.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
@@ -69,6 +71,7 @@
 			// Instruments
 			// 
 			this.Instruments.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.Instruments.Controls.Add(this.buttonCreate);
 			this.Instruments.Controls.Add(this.buttonOpenfile);
 			this.Instruments.Controls.Add(this.textBox_accuracy);
 			this.Instruments.Controls.Add(this.domainUpDown1);
@@ -87,6 +90,16 @@
 			this.Instruments.Name = "Instruments";
 			this.Instruments.Size = new System.Drawing.Size(400, 422);
 			this.Instruments.TabIndex = 1;
+			// 
+			// buttonCreate
+			// 
+			this.buttonCreate.Location = new System.Drawing.Point(278, 390);
+			this.buttonCreate.Name = "buttonCreate";
+			this.buttonCreate.Size = new System.Drawing.Size(95, 23);
+			this.buttonCreate.TabIndex = 10;
+			this.buttonCreate.Text = "Создать файл";
+			this.buttonCreate.UseVisualStyleBackColor = true;
+			this.buttonCreate.Click += new System.EventHandler(this.buttonCreate_Click);
 			// 
 			// buttonOpenfile
 			// 
@@ -297,6 +310,10 @@
 			this.лабараторная2ToolStripMenuItem.Text = "Лабараторная 2";
 			this.лабараторная2ToolStripMenuItem.Click += new System.EventHandler(this.лабараторная2ToolStripMenuItem_Click);
 			// 
+			// saveFileDialog1
+			// 
+			this.saveFileDialog1.Filter = "Тектовый файл| *.txt";
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -347,6 +364,8 @@
 		private System.Windows.Forms.ToolStripMenuItem лабараторная1ToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem лабараторная2ToolStripMenuItem;
 		private System.Windows.Forms.Button buttonOpenfile;
+		private System.Windows.Forms.Button buttonCreate;
+		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
 	}
 }
 
