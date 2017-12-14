@@ -19,74 +19,14 @@ namespace DiffirentialCsharp
 		public string fileans;
 
 		List<PointSolve> Net = new List<PointSolve>();
-		//Для OpenGl
-		public int cube_ = 0, flour_ = 0, sphere_ = 0;
-		public double time = 0;
-		public Point WindowWH, Mouse;
-		public Vertex eye = new Vertex(new double[3] { 0.0, 0.0, 0.0 });
-		public Vertex center = new Vertex(new double[3] { 0.0, 0.0, 0.0 }), center_ = new Vertex(new double[3] { 0.0, 0.0, 0.0 });
-
-		public double fi = 60, psi = 40, fi_ = 60, psi_ = 40, r = 70;
-		public Point mousexy = new Point();
-
-		public float param = 50.0f;
 
 		public Form1()
 		{
 			InitializeComponent();
-			OpenGLWindow.InitializeContexts();
-		}
-
-		private void OpenGLWindow_Load(object sender, EventArgs e)
-		{
-			//----------------------------OpenGL-------------------------------
-			Glut.glutInit();
-			Glut.glutInitDisplayMode(Glut.GLUT_RGB | Glut.GLUT_DOUBLE | Glut.GLUT_DEPTH);
-
-			// цвет отчистки окна 
-			Gl.glClearColor(0, 0, 0, 1);
-
-			// установка порта вывода в соответствии с размерами элемента OpenGLWindow 
-			Gl.glViewport(0, 0, OpenGLWindow.Width, OpenGLWindow.Height);
-
-			// настройка проекции 
-			Gl.glMatrixMode(Gl.GL_PROJECTION);
-			Gl.glLoadIdentity();
-			Glu.gluPerspective(45, (float)OpenGLWindow.Width / (float)OpenGLWindow.Height, 0.1, 200);
-
-			// модельно видовые преобразования
-			Gl.glMatrixMode(Gl.GL_MODELVIEW);
-			Gl.glLoadIdentity();
-
-			// настройка параметров OpenGL для визуализации 
-			Gl.glEnable(Gl.GL_DEPTH_TEST);
-			Gl.glShadeModel(Gl.GL_SMOOTH);
-
-			// освещение
-			Gl.glEnable(Gl.GL_LIGHTING);
-			Gl.glEnable(Gl.GL_LIGHT0);
-			Gl.glEnable(Gl.GL_LIGHT1);
-
-			// смещивание
-			Gl.glEnable(Gl.GL_BLEND);
-			Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
-
-			// точка
-			Gl.glEnable(Gl.GL_POINT_SMOOTH);
-			//-----------------------------OpenGL------------------------------
-
 		}
 
 		private void button_calculate_Click(object sender, EventArgs e)
 		{
-			panel1.Visible = false;
-			OpenGLWindow.Visible = false;
-			/*if (checkBox_yvertex.Checked)
-				OpenGLWindow.Visible = true;
-			else
-				panel1.Visible = true;*/
-
-
 			string[] s = textBox_startcondition.Text.Split(';');
 			Vertex Start = new Vertex(s.Length);
 			for (int i = 0; i < s.Length; i++)
@@ -108,13 +48,6 @@ namespace DiffirentialCsharp
 			richTextBox1.Text = w;
 		}
 
-		private void panel1_Paint(object sender, PaintEventArgs e)
-		{
-			Graphics g = e.Graphics;
-			DrawNet(e);
-			DrawFunction2D(e);
-		}
-
 		private void domainUpDown1_SelectedItemChanged(object sender, EventArgs e)
 		{
 			if (domainUpDown1.Text == "Метод Трапеции (прогноз-коррекция)")
@@ -122,21 +55,7 @@ namespace DiffirentialCsharp
 			else
 				textBox_accuracy.Visible = false;
 		}
-
-		private void DrawFunction2D(PaintEventArgs e)
-		{
-			Graphics g = e.Graphics;
-			int num = Net.Count;
-			double min, max;
-			MaxMinPointSolve(out min, out max);
-			float kx = (float)(panel1.Width - 5) / num, ky = (float)((panel1.Height - 5) / (max - min));
-			for (int i = 0; i < num - 1; i++)
-			{
-				Pen p = new Pen(Color.FromArgb(0, (int)(255 * ((float)(i + 1) / num)), (int)(255 * ((float)(i + 1) / num))));
-				g.DrawLine(p, kx * i + 5, panel1.Height - ky * (float)Net[i].y.v[0], kx * (i + 1) + 5, panel1.Height - ky * (float)Net[i + 1].y.v[0]);
-			}
-		}
-
+		
 		private void лабараторная1ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			label_startcondition.Text = "Начальное условие";
@@ -180,7 +99,7 @@ namespace DiffirentialCsharp
 				richTextBox1.Text += s;
 
 				sys.GetString_01(out s, Convert.ToDouble(textBox_step.Text));
-				string path = Directory.GetCurrentDirectory() + @"\test5.csv";
+				string path = Directory.GetCurrentDirectory() + @"\test6.csv";
 				StreamWriter T = File.AppendText(path);
 				T.WriteLine(s);
 
@@ -212,164 +131,24 @@ namespace DiffirentialCsharp
 		{
 			s = "";
 			int n = (int)Math.Ceiling((r - l) / h);
-			s += (n+1).ToString() + Environment.NewLine;
+			s += (n + 1).ToString() + Environment.NewLine;
 			for (int i = 1; i <= n; i++)
-				s += (1 - (l + i * h) * h).ToString()+" ";
+				s += (1 + (l + i * h) * (l + i * h) * h / 2d).ToString() + " ";
 			s += Environment.NewLine;
-			for (int i = 0; i <= n; i++)
-				s += (-2 - h * h).ToString() + " ";
+			s += (-1 - 1d / h).ToString() + " ";
+			for (int i = 1; i <= n; i++)
+				s += (-2 - 2 * h * h / (l + i * h) / (l + i * h)).ToString() + " ";
 			s += Environment.NewLine;
-			for (int i = 0; i < n; i++)
-				s += (1 + (l + i * h) * h).ToString() + " ";
+			s += (1d / h).ToString() + " ";
+			for (int i = 1; i < n; i++)
+				s += (1 - (l + i * h) * (l + i * h) * h / 2d).ToString() + " ";
 			s += Environment.NewLine;
-			for (int i = 0; i <= n; i++)
-			{
-				var x = l + i * h;
-				s += (2 * h * h * (x*x+1)*Math.Sin(x)).ToString() + " ";
-			}
+			s += (6 - h / 2d).ToString() + " ";
+			for (int i = 1; i < n; i++)
+				s += (h*h).ToString() + " ";
+			s += (h * h - 1).ToString();
 		}
-
-		private void MaxMinPointSolve(out double min, out double max)
-		{
-			min = Net[0].y.x; max = min;
-			foreach (var tmp in Net)
-			{
-				var t = tmp.y.x;
-				if (t < min)
-					min = t;
-				if (t > max)
-					max = t;
-			}
-		}
-
-		private void DrawNet(PaintEventArgs e)
-		{
-			Graphics g = e.Graphics;
-			int nx = 0, ny = 0;
-			float dx = 20, dy = 20;
-			float line = 0;
-			while (panel1.Width > nx * dx)
-			{
-				g.DrawLine(Pens.Black, line + nx * dx, 0, line + nx * dx, panel1.Height);
-				nx++;
-			}
-			line = panel1.Height - 1;
-			while (line > ny * dy)
-			{
-				g.DrawLine(Pens.Black, 0, line - ny * dy, panel1.Width, line - ny * dy);
-				ny++;
-			}
-		}
-
-		//OpenGL
-
-		private void timer1_Tick(object sender, EventArgs e)
-		{
-
-
-			DrawFuncion();
-
-			time += timer1.Interval / 1000.0;
-		}
-
-		private void Init()
-		{
-			flour_ = Gl.glGenLists(1);
-			Gl.glNewList(flour_, Gl.GL_COMPILE);
-			Flour();
-			Gl.glEndList();
-
-			sphere_ = Gl.glGenLists(1);
-			Gl.glNewList(sphere_, Gl.GL_COMPILE);
-			Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_AMBIENT_AND_DIFFUSE, new float[4] { 0.8f, 0.8f, 1, 0.4f });
-			Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_SPECULAR, new float[4] { 1, 1, 1, 1 });
-			Gl.glMaterialf(Gl.GL_FRONT, Gl.GL_SHININESS, 60);
-			Glut.glutSolidSphere(2, 32, 32);
-			Gl.glEndList();
-		}
-
-		private void DrawFuncion()
-		{
-			Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
-			Gl.glLoadIdentity();
-			Glu.gluLookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z, 0, 1, 0);
-
-			Light();
-			Lamp(new Vertex(new double[3] { 0, 20, 0 }), new Vertex(new double[3] { 0, -1, 0 }));
-
-			Gl.glPushMatrix();
-			Gl.glTranslated(0, -2, 0);
-			Gl.glCallList(flour_);
-			Gl.glPopMatrix();
-
-			Gl.glFlush();
-			OpenGLWindow.Invalidate();
-		}
-
-		//Свет
-
-		private void Lamp(Vertex position, Vertex vector)
-		{
-			vector.NormirovkaEvklid();
-			Gl.glPushMatrix();
-			Gl.glTranslated(position.x, position.y, position.z);
-			Gl.glDisable(Gl.GL_LIGHTING);
-			Gl.glColor3d(0, 0, 0);
-			Glut.glutWireCube(1);
-			Gl.glEnable(Gl.GL_LIGHTING);
-
-			float[] light1_positiopn = { (float)position.x, (float)position.y, (float)position.z, 1 };
-			float[] light1_direction = { (float)vector.x, (float)vector.y, (float)vector.z };
-			float[] light1_ambient = { param / 100.0f, param / 100.0f, param / 100.0f, 1 };
-
-			Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_AMBIENT, light1_ambient);
-			Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_POSITION, light1_positiopn);
-			Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_DIFFUSE, light1_ambient);
-			Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_SPECULAR, new float[] { 0, 0.6f, 0.1f, 0 });
-
-			Gl.glLightf(Gl.GL_LIGHT1, Gl.GL_SPOT_CUTOFF, 0.9f);
-			Gl.glLightfv(Gl.GL_LIGHT1, Gl.GL_SPOT_DIRECTION, light1_direction);
-			Gl.glLightf(Gl.GL_LIGHT1, Gl.GL_SPOT_EXPONENT, 0.8f);
-
-			Gl.glPopMatrix();
-		}
-
-		private void Light()
-		{
-			float[] light_position = { 0, 2, 0, 0 };
-			float[] light_ambient = { 0.1f, 0.1f, 0.1f, 1 };
-			float[] white_light = { 1, 1, 1, 1 };
-
-			Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_AMBIENT, light_ambient);
-			Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_POSITION, light_position);
-			Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_DIFFUSE, light_ambient);
-			Gl.glLightfv(Gl.GL_LIGHT0, Gl.GL_SPECULAR, white_light);
-		}
-
-		//Поверхность
-
-		private void Flour()
-		{
-			Gl.glBegin(Gl.GL_TRIANGLES);
-			Gl.glColor3d(0.1, 0.4, 0.1);
-			Gl.glMaterialf(Gl.GL_FRONT, Gl.GL_SHININESS, 0);
-			Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_SPECULAR, new float[] { 0, 0, 0, 1 });
-			Gl.glMaterialfv(Gl.GL_FRONT, Gl.GL_AMBIENT_AND_DIFFUSE, new float[] { 0.1f, 0.4f, 0.1f, 1 });
-			int a = 100;
-			float k = 0.2f, end = (float)a / k * 2;
-			for (int i = 0; i < end; i++)
-				for (int j = 0; j < end; j++)
-				{
-					Gl.glNormal3d(0, 1, 0);
-					Gl.glVertex3f(i * k - a, 0, j * k - a);
-					Gl.glVertex3f((1 + i) * k - a, 0, j * k - a);
-					Gl.glVertex3f((1 + i) * k - a, 0, (1 + j) * k - a);
-					Gl.glVertex3f(i * k - a, 0, j * k - a);
-					Gl.glVertex3f(i * k - a, 0, (1 + j) * k - a);
-					Gl.glVertex3f((1 + i) * k - a, 0, (1 + j) * k - a);
-				}
-			Gl.glEnd();
-		}
+		
 	}
 
 	public struct PointSolve
@@ -597,8 +376,8 @@ namespace DiffirentialCsharp
 		{//точное значение функции
 			Vertex a = new Vertex();
 			//a.v[0] = x * x;
-			a.v[0] = 1000*Math.Exp(-999*x) + 1000/1001*Math.Exp(x) - (999+1000/1001)*Math.Exp(-1000*x);
-			a.v[1] = Math.Exp(-999*x);
+			a.v[0] = 1000 * Math.Exp(-999 * x) + 1000 / 1001 * Math.Exp(x) - (999 + 1000 / 1001) * Math.Exp(-1000 * x);
+			a.v[1] = Math.Exp(-999 * x);
 			a.v[2] = Math.Exp(x);
 			return a;
 		}
@@ -702,7 +481,7 @@ namespace DiffirentialCsharp
 			{
 				F.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0};", x, Start.v[j]);
 				F1.WriteLine("{0:0.00000000000000E+0};{1:0.00000000000000E+0};", x, Start.v[j]);
-				S+= string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, correct.v[j], 0); 
+				S += string.Format("{0:0.00000E+0}        {1:0.00000E+0}        {2:0.00000E+0}\n", x, correct.v[j], 0);
 			}
 			int i = 1, k = 1;
 			while (x < Right + Eps)
@@ -759,7 +538,8 @@ namespace DiffirentialCsharp
 
 		public void Init(StreamReader F)
 		{
-			try {
+			try
+			{
 				string s = F.ReadLine();
 				Dimension = Convert.ToInt16(s);
 
@@ -767,7 +547,7 @@ namespace DiffirentialCsharp
 				s = F.ReadLine();//снизу вверх по диагоналям считываем
 				string[] S = s.Split();
 				for (int i = 1; i < Dimension; i++)
-					a[0, i] = Convert.ToDouble(S[i-1]);
+					a[0, i] = Convert.ToDouble(S[i - 1]);
 				a[0, 0] = 0;
 
 
@@ -789,7 +569,7 @@ namespace DiffirentialCsharp
 				for (int i = 0; i < Dimension; i++)
 					r[i] = Convert.ToDouble(S[i]);
 			}
-			catch(FormatException)
+			catch (FormatException)
 			{
 				MessageBox.Show("Ошибка типа!");
 			}
@@ -801,10 +581,10 @@ namespace DiffirentialCsharp
 			a[2, 0] /= -a[1, 0];
 			a[1, 0] = r[0] / a[1, 0];
 			double tmp;
-			for (int i = 1;i<Dimension;i++)
+			for (int i = 1; i < Dimension; i++)
 			{
 				tmp = a[1, i] + a[0, i] * a[2, i - 1];
-				if(Math.Abs(tmp) < 1E-20)
+				if (Math.Abs(tmp) < 1E-20)
 				{
 					MessageBox.Show("Система не корректна");
 					return false;
@@ -832,15 +612,25 @@ namespace DiffirentialCsharp
 				a[0, i] = a[2, i] * a[0, i + 1] + a[1, i];
 				S = a[0, i].ToString() + '\n' + S;
 			}
-			S += '\n' + Math.Abs(-0.5 * Math.Cos(0.5) - a[0,0]).ToString();
+			S += '\n' + Math.Abs(-0.5 * Math.Cos(0.5) - a[0, 0]).ToString();
 		}
 
 		public void GetString_01(out string S, double h)
 		{
-			S = "";
-			int n = (int)(0.05 / h);
-			for (int i = 0; i < 11; i++)
-				S += a[0, i].ToString() + '\n';
+			//[0.5,1]
+			S = "h;y\n";
+			S += "0;" + a[0, 0].ToString() + '\n';
+			double l = 0.5;
+			double[] H = { 0.55, 0.6,0.65,0.7,0.75, 0.8, 0.85, 0.9,0.95, 1, 1 };
+			for (int i = 1, k=0; k < 11 && i < Dimension; i++)
+			{
+				double x = l + i * h;
+				if (H[k] < x + 1E-8)
+				{
+					S += x.ToString() + ";" + a[0, i].ToString() + '\n';
+					k++;
+				}
+			}
 		}
 	}
 }

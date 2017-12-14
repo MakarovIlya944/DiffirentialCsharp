@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
 			this.textBox_startcondition = new System.Windows.Forms.TextBox();
 			this.Instruments = new System.Windows.Forms.Panel();
 			this.buttonCreate = new System.Windows.Forms.Button();
@@ -45,9 +44,6 @@
 			this.label_rightborder = new System.Windows.Forms.Label();
 			this.label_leftborder = new System.Windows.Forms.Label();
 			this.label_Instruments = new System.Windows.Forms.Label();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.OpenGLWindow = new Tao.Platform.Windows.SimpleOpenGlControl();
-			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -57,7 +53,6 @@
 			this.лабараторная2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.Instruments.SuspendLayout();
-			this.panel1.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -223,38 +218,6 @@
 			this.label_Instruments.TabIndex = 0;
 			this.label_Instruments.Text = "Инструменты";
 			// 
-			// panel1
-			// 
-			this.panel1.BackColor = System.Drawing.SystemColors.MenuBar;
-			this.panel1.Controls.Add(this.OpenGLWindow);
-			this.panel1.Location = new System.Drawing.Point(725, 12);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(554, 437);
-			this.panel1.TabIndex = 2;
-			this.panel1.Visible = false;
-			this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
-			// 
-			// OpenGLWindow
-			// 
-			this.OpenGLWindow.AccumBits = ((byte)(0));
-			this.OpenGLWindow.AutoCheckErrors = false;
-			this.OpenGLWindow.AutoFinish = false;
-			this.OpenGLWindow.AutoMakeCurrent = true;
-			this.OpenGLWindow.AutoSwapBuffers = false;
-			this.OpenGLWindow.BackColor = System.Drawing.Color.Black;
-			this.OpenGLWindow.ColorBits = ((byte)(32));
-			this.OpenGLWindow.DepthBits = ((byte)(16));
-			this.OpenGLWindow.Location = new System.Drawing.Point(0, 0);
-			this.OpenGLWindow.Name = "OpenGLWindow";
-			this.OpenGLWindow.Size = new System.Drawing.Size(554, 437);
-			this.OpenGLWindow.StencilBits = ((byte)(0));
-			this.OpenGLWindow.TabIndex = 0;
-			this.OpenGLWindow.Visible = false;
-			// 
-			// timer1
-			// 
-			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-			// 
 			// richTextBox1
 			// 
 			this.richTextBox1.Location = new System.Drawing.Point(418, 52);
@@ -283,7 +246,7 @@
             this.выборЛабыToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(1291, 24);
+			this.menuStrip1.Size = new System.Drawing.Size(728, 24);
 			this.menuStrip1.TabIndex = 5;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -318,10 +281,9 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1291, 461);
+			this.ClientSize = new System.Drawing.Size(728, 461);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.richTextBox1);
-			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.Instruments);
 			this.Controls.Add(this.menuStrip1);
 			this.MainMenuStrip = this.menuStrip1;
@@ -329,7 +291,6 @@
 			this.Text = "Дифференциальные уравнения";
 			this.Instruments.ResumeLayout(false);
 			this.Instruments.PerformLayout();
-			this.panel1.ResumeLayout(false);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			this.ResumeLayout(false);
@@ -351,9 +312,6 @@
 		private System.Windows.Forms.TextBox textBox_rightborder;
 		private System.Windows.Forms.Button button_calculate;
 		private System.Windows.Forms.DomainUpDown domainUpDown1;
-		private System.Windows.Forms.Panel panel1;
-		private Tao.Platform.Windows.SimpleOpenGlControl OpenGLWindow;
-		private System.Windows.Forms.Timer timer1;
 		private System.Windows.Forms.RichTextBox richTextBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textBox_accuracy;
