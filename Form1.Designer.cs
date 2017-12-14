@@ -51,7 +51,13 @@
 			this.выборЛабыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.лабараторная1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.лабараторная2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.лабараторная3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+			this.button1 = new System.Windows.Forms.Button();
+			this.domainUpDown2 = new System.Windows.Forms.DomainUpDown();
+			this.domainUpDown3 = new System.Windows.Forms.DomainUpDown();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
 			this.Instruments.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -66,6 +72,9 @@
 			// Instruments
 			// 
 			this.Instruments.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.Instruments.Controls.Add(this.domainUpDown3);
+			this.Instruments.Controls.Add(this.domainUpDown2);
+			this.Instruments.Controls.Add(this.button1);
 			this.Instruments.Controls.Add(this.buttonCreate);
 			this.Instruments.Controls.Add(this.buttonOpenfile);
 			this.Instruments.Controls.Add(this.textBox_accuracy);
@@ -79,6 +88,8 @@
 			this.Instruments.Controls.Add(this.label_step);
 			this.Instruments.Controls.Add(this.label_startcondition);
 			this.Instruments.Controls.Add(this.label_rightborder);
+			this.Instruments.Controls.Add(this.label3);
+			this.Instruments.Controls.Add(this.label2);
 			this.Instruments.Controls.Add(this.label_leftborder);
 			this.Instruments.Controls.Add(this.label_Instruments);
 			this.Instruments.Location = new System.Drawing.Point(12, 27);
@@ -254,7 +265,8 @@
 			// 
 			this.выборЛабыToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.лабараторная1ToolStripMenuItem,
-            this.лабараторная2ToolStripMenuItem});
+            this.лабараторная2ToolStripMenuItem,
+            this.лабараторная3ToolStripMenuItem});
 			this.выборЛабыToolStripMenuItem.Name = "выборЛабыToolStripMenuItem";
 			this.выборЛабыToolStripMenuItem.Size = new System.Drawing.Size(88, 20);
 			this.выборЛабыToolStripMenuItem.Text = "Выбор лабы";
@@ -273,9 +285,69 @@
 			this.лабараторная2ToolStripMenuItem.Text = "Лабараторная 2";
 			this.лабараторная2ToolStripMenuItem.Click += new System.EventHandler(this.лабараторная2ToolStripMenuItem_Click);
 			// 
+			// лабараторная3ToolStripMenuItem
+			// 
+			this.лабараторная3ToolStripMenuItem.Name = "лабараторная3ToolStripMenuItem";
+			this.лабараторная3ToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+			this.лабараторная3ToolStripMenuItem.Text = "Лабараторная 3";
+			this.лабараторная3ToolStripMenuItem.Click += new System.EventHandler(this.лабараторная3ToolStripMenuItem_Click);
+			// 
 			// saveFileDialog1
 			// 
 			this.saveFileDialog1.Filter = "Тектовый файл| *.txt";
+			// 
+			// button1
+			// 
+			this.button1.Location = new System.Drawing.Point(10, 390);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(111, 23);
+			this.button1.TabIndex = 11;
+			this.button1.Text = "Посчитать МКЭ";
+			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Visible = false;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
+			// 
+			// domainUpDown2
+			// 
+			this.domainUpDown2.Items.Add("Первое краевое");
+			this.domainUpDown2.Items.Add("Второе краевое");
+			this.domainUpDown2.Location = new System.Drawing.Point(267, 117);
+			this.domainUpDown2.Name = "domainUpDown2";
+			this.domainUpDown2.Size = new System.Drawing.Size(120, 20);
+			this.domainUpDown2.TabIndex = 12;
+			this.domainUpDown2.Text = "выберите тип условия";
+			this.domainUpDown2.Visible = false;
+			// 
+			// domainUpDown3
+			// 
+			this.domainUpDown3.Items.Add("Первое краевое");
+			this.domainUpDown3.Items.Add("Второе краевое");
+			this.domainUpDown3.Location = new System.Drawing.Point(267, 167);
+			this.domainUpDown3.Name = "domainUpDown3";
+			this.domainUpDown3.Size = new System.Drawing.Size(120, 20);
+			this.domainUpDown3.TabIndex = 12;
+			this.domainUpDown3.Text = "выберите тип условия";
+			this.domainUpDown3.Visible = false;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(264, 96);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(108, 13);
+			this.label2.TabIndex = 1;
+			this.label2.Text = "Тип левого условия";
+			this.label2.Visible = false;
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(264, 146);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(114, 13);
+			this.label3.TabIndex = 1;
+			this.label3.Text = "Тип правого условия";
+			this.label3.Visible = false;
 			// 
 			// Form1
 			// 
@@ -324,6 +396,12 @@
 		private System.Windows.Forms.Button buttonOpenfile;
 		private System.Windows.Forms.Button buttonCreate;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+		private System.Windows.Forms.ToolStripMenuItem лабараторная3ToolStripMenuItem;
+		private System.Windows.Forms.Button button1;
+		private System.Windows.Forms.DomainUpDown domainUpDown3;
+		private System.Windows.Forms.DomainUpDown domainUpDown2;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label label2;
 	}
 }
 

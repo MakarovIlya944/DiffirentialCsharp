@@ -17,9 +17,7 @@ namespace DiffirentialCsharp
 	public partial class Form1 : Form
 	{
 		public string fileans;
-
-		List<PointSolve> Net = new List<PointSolve>();
-
+		
 		public Form1()
 		{
 			InitializeComponent();
@@ -36,7 +34,7 @@ namespace DiffirentialCsharp
 			switch (domainUpDown1.Text)
 			{
 				case "Метод Эйлера":
-					Net = system.Eiler(out w);
+					system.Eiler(out w);
 					break;
 				case "Метод Рунге-Кутты":
 					system.RungeKutta(out w);
@@ -65,6 +63,7 @@ namespace DiffirentialCsharp
 			domainUpDown1.Visible = true;
 			buttonOpenfile.Visible = false;
 			buttonCreate.Visible = false;
+			button1.Visible = false;
 		}
 
 		private void лабараторная2ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -77,6 +76,7 @@ namespace DiffirentialCsharp
 			domainUpDown1.Visible = false;
 			buttonOpenfile.Visible = true;
 			buttonCreate.Visible = true;
+			button1.Visible = false;
 		}
 
 		private void buttonOpenfile_Click(object sender, EventArgs e)
@@ -148,25 +148,38 @@ namespace DiffirentialCsharp
 				s += (h*h).ToString() + " ";
 			s += (h * h - 1).ToString();
 		}
-		
-	}
 
-	public struct PointSolve
-	{
-		public double x;
-		public Vertex y;
-		public PointSolve(double X, Vertex Y)
+		private void лабараторная3ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			x = X;
-			y = Y;
+			textBox_accuracy.Visible = false;
+			textBox_startcondition.Visible = false;
+			button_calculate.Visible = false;
+			checkBox_yvertex.Visible = false;
+			domainUpDown1.Visible = false;
+			buttonOpenfile.Visible = true;
+			buttonCreate.Visible = true;
+			button1.Visible = true;
+			label2.Visible = true;
+			label3.Visible = true;
+			domainUpDown2.Visible = true;
+			domainUpDown3.Visible = true;
 		}
-		public static bool operator <(PointSolve a, PointSolve b)
+
+		private void button1_Click(object sender, EventArgs e)
 		{
-			return a.y.x < b.y.x;
-		}
-		public static bool operator >(PointSolve a, PointSolve b)
-		{
-			return a.y.x > b.y.x;
+			double h = Convert.ToDouble(textBox_step.Text);
+			double l = Convert.ToDouble(textBox_leftborder.Text);
+			double r = Convert.ToDouble(textBox_rightborder.Text);
+			richTextBox1.Text = "";
+			string s  ="";
+
+			MFE sys = new MFE();
+			sys.GenGlobalMatrix(l, r, h,1,1);
+			DiagEq system = new DiagEq();
+			system.Init(sys.n, sys.a, sys.r);
+			if (system.Forward())
+				system.Reverse(out s);
+			richTextBox1.Text = s;
 		}
 	}
 
@@ -381,9 +394,8 @@ namespace DiffirentialCsharp
 			a.v[2] = Math.Exp(x);
 			return a;
 		}
-		public List<PointSolve> Eiler(out string S)
+		public void Eiler(out string S)
 		{
-			List<PointSolve> ans = new List<PointSolve>();
 			//вычисление
 			Vertex eiler = Start;
 			double x = Left;
@@ -395,7 +407,6 @@ namespace DiffirentialCsharp
 			int i = 1, k = 0;
 			while (x < Right + Eps)
 			{
-				ans.Add(new PointSolve(x, eiler));
 				for (int j = 0; j < Vertex.Dimension; j++)
 				{
 					double tmp = (Exact(x) - eiler).NormaEvklid();
@@ -420,7 +431,6 @@ namespace DiffirentialCsharp
 			}
 			F.WriteLine("\n");
 			F.Close();
-			return ans;
 		}
 
 		public void RungeKutta(out string S)
@@ -575,6 +585,13 @@ namespace DiffirentialCsharp
 			}
 		}
 
+		public void Init(int n, double[,] A, double[] B)
+		{
+			Dimension = n;
+			a = A;
+			r = B;
+		}
+
 		public bool Forward()
 		{
 			//2 - беты 1 - лямбда
@@ -610,9 +627,13 @@ namespace DiffirentialCsharp
 			for (int i = Dimension - 2; i >= 0; i--)
 			{
 				a[0, i] = a[2, i] * a[0, i + 1] + a[1, i];
-				S = a[0, i].ToString() + '\n' + S;
+				S = a[0, i].ToString() +  '\n' + S;
 			}
-			S += '\n' + Math.Abs(-0.5 * Math.Cos(0.5) - a[0, 0]).ToString();
+		}
+
+		private double f(double x)
+		{
+			return Math.Sin(Math.PI * x);
 		}
 
 		public void GetString_01(out string S, double h)
@@ -631,6 +652,104 @@ namespace DiffirentialCsharp
 					k++;
 				}
 			}
+		}
+	}
+
+	public class MFE
+	{
+		public int n;
+		public double[,] a;
+		public double[] r;
+		public double h;
+
+		private double l(double x)
+		{
+			return Math.PI * (Math.Exp(x + h) - Math.Exp(x))/h/h;
+		}
+
+		private double y(double x)
+		{
+			return 0;
+		}
+
+		private double f1(double x)
+		{
+			return Math.PI * (Math.Exp(x+h) - Math.Exp(x) * (h + 1)) / h;
+		}
+
+		private double f2(double x)
+		{
+			return Math.PI * (Math.Exp(x) + Math.Exp(x+h) * (1 - h)) / h;
+		}
+
+		public void GenGlobalMatrix(double left, double right, double H, int lc, int rc)
+		{
+			h = H;
+			n = (int)((right - left) / h) + 1;
+			a = new double[3, n];
+			r = new double[n];
+
+			double x = left;
+			double l1 = l(left), l2 = l(left + h), h_ = 1d/2d/h, h6 = h/6d;
+			double k1, k2;
+
+			l2 = l(left);
+			for (int i=0;i<n-1;i++)
+			{
+				l1 = l2;
+				l2 = l(x + h);
+
+				k1 = l(x);
+				k2 = y(x) * h6;
+
+				//2 1
+				a[0, i + 1] -= k1;
+				//1 1
+				a[1, i] += k1;
+				//2 2
+				a[1, i + 1] += k1;
+				//1 2
+				a[2, i] -= k1;
+
+				r[i] += f1(x);
+				r[i+1] += f2(x);
+
+				x = (i + 1) * h + left;				
+			}
+			if (lc == 1)
+				LeftFirstCond();
+			else
+				LeftSecondCond();
+			if (rc == 1)
+				RightFirstCond();
+			else
+				RightSecondCond();
+
+			int sd = 4;
+		}
+
+		private void LeftFirstCond()
+		{
+			double cond = 0;
+			r[0] -= a[1, 0] * cond;
+			a[1, 0] = 0;
+		}
+
+		private void RightFirstCond()
+		{
+			double cond = 0;
+			r[n-1] -= a[1, n - 1] * cond;
+			a[1, n-1] = 0;
+		}
+
+		private void LeftSecondCond()
+		{
+
+		}
+
+		private void RightSecondCond()
+		{
+
 		}
 	}
 }
