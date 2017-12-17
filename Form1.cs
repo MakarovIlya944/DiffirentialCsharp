@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Tao.FreeGlut;
-using Tao.OpenGl;
-using Tao.Platform.Windows;
 using System.IO;
+
 
 namespace DiffirentialCsharp
 {
 	public partial class Form1 : Form
 	{
+		public int menu = 1;
 		public string fileans;
 		
 		public Form1()
@@ -64,6 +57,7 @@ namespace DiffirentialCsharp
 			buttonOpenfile.Visible = false;
 			buttonCreate.Visible = false;
 			button1.Visible = false;
+			menu = 1;
 		}
 
 		private void лабараторная2ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -77,6 +71,7 @@ namespace DiffirentialCsharp
 			buttonOpenfile.Visible = true;
 			buttonCreate.Visible = true;
 			button1.Visible = false;
+			menu = 2;
 		}
 
 		private void buttonOpenfile_Click(object sender, EventArgs e)
@@ -89,12 +84,12 @@ namespace DiffirentialCsharp
 				string url = openFileDialog1.FileName;
 				StreamReader F = new StreamReader(url, Encoding.Default);
 
-				string s = "";
+				string s = "",sdf = "";
 
 				DiagEq sys = new DiagEq();
 				sys.Init(F);
 				if (sys.Forward())
-					sys.Reverse(out s);
+					sys.Reverse(out s, out sdf, 3);
 
 				richTextBox1.Text += s;
 
@@ -110,21 +105,51 @@ namespace DiffirentialCsharp
 
 		private void buttonCreate_Click(object sender, EventArgs e)
 		{
-			string S;
+			if (menu == 2)
+			{
+				string S;
 
-			double h = Convert.ToDouble(textBox_step.Text);
-			double l = Convert.ToDouble(textBox_leftborder.Text);
-			double r = Convert.ToDouble(textBox_rightborder.Text);
+				double h = Convert.ToDouble(textBox_step.Text);
+				double l = Convert.ToDouble(textBox_leftborder.Text);
+				double r = Convert.ToDouble(textBox_rightborder.Text);
 
-			CreateMatrix(l, r, h, out S);
+				CreateMatrix(l, r, h, out S);
 
-			if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
-				return;
-			// получаем выбранный файл
-			string filename = saveFileDialog1.FileName;
-			fileans = filename;
-			// сохраняем текст в файл
-			System.IO.File.WriteAllText(filename, S);
+				if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+					return;
+				// получаем выбранный файл
+				string filename = saveFileDialog1.FileName;
+				fileans = filename;
+				// сохраняем текст в файл
+				System.IO.File.WriteAllText(filename, S);
+			}
+			else
+			{
+				double h = Convert.ToDouble(textBox_step.Text);
+				double l = Convert.ToDouble(textBox_leftborder.Text);
+				double r = Convert.ToDouble(textBox_rightborder.Text);
+
+				string S = "";
+
+				double[] H = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 };
+				for (int i = 0, k = 0, n = (int)((r - l) / h) + 1; k < 11 && i < n; i++)
+				{
+					double x = l + i * h;
+					if (H[k] < x + 1E-8)
+					{
+						S += x.ToString() + ";" + f(x).ToString() + '\n';
+						k++;
+					}
+				}
+
+				if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+					return;
+				// получаем выбранный файл
+				string filename = saveFileDialog1.FileName;
+				fileans = filename;
+				// сохраняем текст в файл
+				System.IO.File.WriteAllText(filename, S);
+			}
 		}
 
 		private void CreateMatrix(double l, double r, double h, out string s)
@@ -163,6 +188,12 @@ namespace DiffirentialCsharp
 			label3.Visible = true;
 			domainUpDown2.Visible = true;
 			domainUpDown3.Visible = true;
+			menu = 3;
+		}
+
+		private double f(double x)
+		{
+			return Math.Sin(Math.PI * x);
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -171,15 +202,36 @@ namespace DiffirentialCsharp
 			double l = Convert.ToDouble(textBox_leftborder.Text);
 			double r = Convert.ToDouble(textBox_rightborder.Text);
 			richTextBox1.Text = "";
-			string s  ="";
+			string s  ="", file = "";
 
 			MFE sys = new MFE();
-			sys.GenGlobalMatrix(l, r, h,1,1);
+
+			int rc = 1, lc = 1;
+			if (domainUpDown2.Text == "Первое краевое")
+				lc = 1;
+			else
+				lc = 2;
+			if (domainUpDown3.Text == "Первое краевое")
+				rc = 1;
+			else
+				rc = 2;
+			sys.GenGlobalMatrix(l, r, h,lc,rc);
+
+
 			DiagEq system = new DiagEq();
 			system.Init(sys.n, sys.a, sys.r);
 			if (system.Forward())
-				system.Reverse(out s);
+				system.Reverse(out s, out file, h);
+
 			richTextBox1.Text = s;
+
+			if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+				return;
+			// получаем выбранный файл
+			string filename = saveFileDialog1.FileName;
+			fileans = filename;
+			// сохраняем текст в файл
+			System.IO.File.WriteAllText(filename, file);
 		}
 	}
 
@@ -617,8 +669,14 @@ namespace DiffirentialCsharp
 			return true;
 		}
 
-		public void Reverse(out string S)
+		private double f(double x)
 		{
+			return Math.Sin(Math.PI * x);
+		}
+
+		public void Reverse(out string S, out string file, double h)
+		{
+			file = "";
 			//2 - беты 1 - лямбда
 			//ответ в 0
 			a[0, Dimension - 1] = a[1, Dimension - 1];//х н = лямбда н 
@@ -629,21 +687,17 @@ namespace DiffirentialCsharp
 				a[0, i] = a[2, i] * a[0, i + 1] + a[1, i];
 				S = a[0, i].ToString() +  '\n' + S;
 			}
-		}
-
-		private double f(double x)
-		{
-			return Math.Sin(Math.PI * x);
+			GetString_01(out file, h);
 		}
 
 		public void GetString_01(out string S, double h)
 		{
-			//[0.5,1]
+			//[0,1]
 			S = "h;y\n";
 			S += "0;" + a[0, 0].ToString() + '\n';
-			double l = 0.5;
-			double[] H = { 0.55, 0.6,0.65,0.7,0.75, 0.8, 0.85, 0.9,0.95, 1, 1 };
-			for (int i = 1, k=0; k < 11 && i < Dimension; i++)
+			double l = 0;
+			double[] H = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1 };
+			for (int i = 2, k=0; k < 11 && i < Dimension; i++)
 			{
 				double x = l + i * h;
 				if (H[k] < x + 1E-8)
@@ -657,14 +711,15 @@ namespace DiffirentialCsharp
 
 	public class MFE
 	{
+
+		public double pi = Math.PI;
 		public int n;
 		public double[,] a;
 		public double[] r;
-		public double h;
 
 		private double l(double x)
 		{
-			return Math.PI * (Math.Exp(x + h) - Math.Exp(x))/h/h;
+			return Math.Exp(x);
 		}
 
 		private double y(double x)
@@ -672,84 +727,111 @@ namespace DiffirentialCsharp
 			return 0;
 		}
 
-		private double f1(double x)
+		private double f(double x)
 		{
-			return Math.PI * (Math.Exp(x+h) - Math.Exp(x) * (h + 1)) / h;
+			return Math.Exp(x)* (pi * Math.Sin(pi*x) - Math.Cos(pi*x)) * pi;
 		}
 
-		private double f2(double x)
+		public void GenGlobalMatrix(double left, double right, double h, int lc, int rc)
 		{
-			return Math.PI * (Math.Exp(x) + Math.Exp(x+h) * (1 - h)) / h;
-		}
-
-		public void GenGlobalMatrix(double left, double right, double H, int lc, int rc)
-		{
-			h = H;
 			n = (int)((right - left) / h) + 1;
+			int start = 1, finish = n;
+			double x = left;
+			double l1, l2 = l(left), h_ = 1d / 2d / h, h6 = h / 6d;
+
+			double asd = f(0);
+			asd = f(0.5);
+			asd = f(0.75);
+			asd = f(1);
+
+			if (lc == 1)
+			{
+				n--;
+				start++;
+				x += h;
+				l2 = l(x);
+			}
+			if (rc == 1)
+			{
+				n--;
+				finish--;
+			}
+
 			a = new double[3, n];
 			r = new double[n];
-
-			double x = left;
-			double l1 = l(left), l2 = l(left + h), h_ = 1d/2d/h, h6 = h/6d;
+			
 			double k1, k2;
 
-			l2 = l(left);
-			for (int i=0;i<n-1;i++)
+			for (int i = 0, k = start; k < finish; i++, k++)
 			{
 				l1 = l2;
 				l2 = l(x + h);
 
-				k1 = l(x);
+				k1 = (l1 + l2) * h_;
 				k2 = y(x) * h6;
 
 				//2 1
-				a[0, i + 1] -= k1;
+				a[0, i + 1] += -k1 + k2;
 				//1 1
-				a[1, i] += k1;
+				a[1, i] += k1 + 2 * k2;
 				//2 2
-				a[1, i + 1] += k1;
+				a[1, i + 1] += k1 + 2 * k2;
 				//1 2
-				a[2, i] -= k1;
+				a[2, i] += -k1 + k2;
 
-				r[i] += f1(x);
-				r[i+1] += f2(x);
+				r[i] += (2*f(x) + f(x+h))*h6;
+				r[i + 1] += (2 * f(x + h) + f(x)) * h6;
 
-				x = (i + 1) * h + left;				
+				x = k * h + left;
 			}
+			double cond;
 			if (lc == 1)
+			{
+				a[0, 0] = (l(left) + l(left + h)) / 2d / h;
+				double b2 = h6 * (f(left) + 2 * f(left + h));
+				r[0] += b2;
+				a[1, 0] += a[0, 0];
 				LeftFirstCond();
+			}
 			else
-				LeftSecondCond();
+			{
+				cond = pi;
+				//a[1, 0] = -1d / h;
+				//a[2, 0] = 1d / h;
+				//r[0] = f(left);
+				r[0] += cond;
+			}
 			if (rc == 1)
+			{
+				a[2, n - 1] = (l(right) + l(right - h)) / 2d / h;
+				a[1, n - 1] += a[2, n - 1];
+				double e1 = h6 * (2 * f(right - h) + f(right));
+				r[n - 1] += e1;
 				RightFirstCond();
+			}
 			else
-				RightSecondCond();
-
-			int sd = 4;
+			{
+				cond = pi * Math.E;
+				//a[1, n - 1] = -1d / h
+				//a[0, n - 1] = 1d / h;
+				//r[n - 1] = f(right);
+				r[n - 1] += cond;
+			}
+			int df = 4;
 		}
 
 		private void LeftFirstCond()
 		{
 			double cond = 0;
-			r[0] -= a[1, 0] * cond;
-			a[1, 0] = 0;
+			r[0] += a[0, 0] * cond;
+			a[0, 0] = 0;
 		}
 
 		private void RightFirstCond()
 		{
 			double cond = 0;
-			r[n-1] -= a[1, n - 1] * cond;
-			a[1, n-1] = 0;
-		}
-
-		private void LeftSecondCond()
-		{
-
-		}
-
-		private void RightSecondCond()
-		{
-
+			r[n-1] += a[2, n - 1] * cond;
+			a[2, n-1] = 0;
 		}
 	}
 }

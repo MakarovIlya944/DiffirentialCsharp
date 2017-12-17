@@ -30,6 +30,9 @@
 		{
 			this.textBox_startcondition = new System.Windows.Forms.TextBox();
 			this.Instruments = new System.Windows.Forms.Panel();
+			this.domainUpDown3 = new System.Windows.Forms.DomainUpDown();
+			this.domainUpDown2 = new System.Windows.Forms.DomainUpDown();
+			this.button1 = new System.Windows.Forms.Button();
 			this.buttonCreate = new System.Windows.Forms.Button();
 			this.buttonOpenfile = new System.Windows.Forms.Button();
 			this.textBox_accuracy = new System.Windows.Forms.TextBox();
@@ -42,6 +45,8 @@
 			this.label_step = new System.Windows.Forms.Label();
 			this.label_startcondition = new System.Windows.Forms.Label();
 			this.label_rightborder = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
 			this.label_leftborder = new System.Windows.Forms.Label();
 			this.label_Instruments = new System.Windows.Forms.Label();
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
@@ -53,11 +58,6 @@
 			this.лабараторная2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.лабараторная3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-			this.button1 = new System.Windows.Forms.Button();
-			this.domainUpDown2 = new System.Windows.Forms.DomainUpDown();
-			this.domainUpDown3 = new System.Windows.Forms.DomainUpDown();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
 			this.Instruments.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -96,6 +96,39 @@
 			this.Instruments.Name = "Instruments";
 			this.Instruments.Size = new System.Drawing.Size(400, 422);
 			this.Instruments.TabIndex = 1;
+			// 
+			// domainUpDown3
+			// 
+			this.domainUpDown3.Items.Add("Первое краевое");
+			this.domainUpDown3.Items.Add("Второе краевое");
+			this.domainUpDown3.Location = new System.Drawing.Point(267, 167);
+			this.domainUpDown3.Name = "domainUpDown3";
+			this.domainUpDown3.Size = new System.Drawing.Size(120, 20);
+			this.domainUpDown3.TabIndex = 12;
+			this.domainUpDown3.Text = "выберите тип условия";
+			this.domainUpDown3.Visible = false;
+			// 
+			// domainUpDown2
+			// 
+			this.domainUpDown2.Items.Add("Первое краевое");
+			this.domainUpDown2.Items.Add("Второе краевое");
+			this.domainUpDown2.Location = new System.Drawing.Point(267, 117);
+			this.domainUpDown2.Name = "domainUpDown2";
+			this.domainUpDown2.Size = new System.Drawing.Size(120, 20);
+			this.domainUpDown2.TabIndex = 12;
+			this.domainUpDown2.Text = "выберите тип условия";
+			this.domainUpDown2.Visible = false;
+			// 
+			// button1
+			// 
+			this.button1.Location = new System.Drawing.Point(10, 390);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(111, 23);
+			this.button1.TabIndex = 11;
+			this.button1.Text = "Посчитать МКЭ";
+			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Visible = false;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// buttonCreate
 			// 
@@ -210,6 +243,26 @@
 			this.label_rightborder.TabIndex = 2;
 			this.label_rightborder.Text = "Правая граница";
 			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(264, 146);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(114, 13);
+			this.label3.TabIndex = 1;
+			this.label3.Text = "Тип правого условия";
+			this.label3.Visible = false;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(264, 96);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(108, 13);
+			this.label2.TabIndex = 1;
+			this.label2.Text = "Тип левого условия";
+			this.label2.Visible = false;
+			// 
 			// label_leftborder
 			// 
 			this.label_leftborder.AutoSize = true;
@@ -294,60 +347,7 @@
 			// 
 			// saveFileDialog1
 			// 
-			this.saveFileDialog1.Filter = "Тектовый файл| *.txt";
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(10, 390);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(111, 23);
-			this.button1.TabIndex = 11;
-			this.button1.Text = "Посчитать МКЭ";
-			this.button1.UseVisualStyleBackColor = true;
-			this.button1.Visible = false;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// domainUpDown2
-			// 
-			this.domainUpDown2.Items.Add("Первое краевое");
-			this.domainUpDown2.Items.Add("Второе краевое");
-			this.domainUpDown2.Location = new System.Drawing.Point(267, 117);
-			this.domainUpDown2.Name = "domainUpDown2";
-			this.domainUpDown2.Size = new System.Drawing.Size(120, 20);
-			this.domainUpDown2.TabIndex = 12;
-			this.domainUpDown2.Text = "выберите тип условия";
-			this.domainUpDown2.Visible = false;
-			// 
-			// domainUpDown3
-			// 
-			this.domainUpDown3.Items.Add("Первое краевое");
-			this.domainUpDown3.Items.Add("Второе краевое");
-			this.domainUpDown3.Location = new System.Drawing.Point(267, 167);
-			this.domainUpDown3.Name = "domainUpDown3";
-			this.domainUpDown3.Size = new System.Drawing.Size(120, 20);
-			this.domainUpDown3.TabIndex = 12;
-			this.domainUpDown3.Text = "выберите тип условия";
-			this.domainUpDown3.Visible = false;
-			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(264, 96);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(108, 13);
-			this.label2.TabIndex = 1;
-			this.label2.Text = "Тип левого условия";
-			this.label2.Visible = false;
-			// 
-			// label3
-			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(264, 146);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(114, 13);
-			this.label3.TabIndex = 1;
-			this.label3.Text = "Тип правого условия";
-			this.label3.Visible = false;
+			this.saveFileDialog1.Filter = "Тектовый файл| *.txt|Таблица| *.csv";
 			// 
 			// Form1
 			// 
