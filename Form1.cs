@@ -193,7 +193,8 @@ namespace DiffirentialCsharp
 
 		private double f(double x)
 		{
-			return Math.Sin(Math.PI * x);
+			//return Math.Sin(Math.PI * x);
+			return x + 2 * x * x;
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -669,11 +670,6 @@ namespace DiffirentialCsharp
 			return true;
 		}
 
-		private double f(double x)
-		{
-			return Math.Sin(Math.PI * x);
-		}
-
 		public void Reverse(out string S, out string file, double h)
 		{
 			file = "";
@@ -719,17 +715,19 @@ namespace DiffirentialCsharp
 
 		private double l(double x)
 		{
-			return Math.Exp(x);
+			//return Math.Exp(x);
+			return Math.Exp(-x);
 		}
 
 		private double y(double x)
 		{
-			return 0;
+			return Math.Sqrt(x);
 		}
 
 		private double f(double x)
 		{
-			return Math.Exp(x)* (pi * Math.Sin(pi*x) - Math.Cos(pi*x)) * pi;
+			//return Math.Exp(x)* (pi * Math.Sin(pi*x) - Math.Cos(pi*x)) * pi;
+			return -Math.Exp(-x) * (4 * x - 3) + Math.Sqrt(x) * (x + 2 * x * x);
 		}
 
 		public void GenGlobalMatrix(double left, double right, double h, int lc, int rc)
@@ -738,12 +736,7 @@ namespace DiffirentialCsharp
 			int start = 1, finish = n;
 			double x = left;
 			double l1, l2 = l(left), h_ = 1d / 2d / h, h6 = h / 6d;
-
-			double asd = f(0);
-			asd = f(0.5);
-			asd = f(0.75);
-			asd = f(1);
-
+			
 			if (lc == 1)
 			{
 				n--;
@@ -781,6 +774,8 @@ namespace DiffirentialCsharp
 
 				r[i] += (2*f(x) + f(x+h))*h6;
 				r[i + 1] += (2 * f(x + h) + f(x)) * h6;
+				//r[i] += f(x)*h/2d;
+				//r[i + 1] += f(x + h) * h/2d;
 
 				x = k * h + left;
 			}
@@ -795,11 +790,8 @@ namespace DiffirentialCsharp
 			}
 			else
 			{
-				cond = pi;
-				//a[1, 0] = -1d / h;
-				//a[2, 0] = 1d / h;
-				//r[0] = f(left);
-				r[0] += cond;
+				cond = 1;
+				r[0] += cond * h6;
 			}
 			if (rc == 1)
 			{
@@ -811,11 +803,8 @@ namespace DiffirentialCsharp
 			}
 			else
 			{
-				cond = pi * Math.E;
-				//a[1, n - 1] = -1d / h
-				//a[0, n - 1] = 1d / h;
-				//r[n - 1] = f(right);
-				r[n - 1] += cond;
+				cond = -5d / Math.E;
+				r[n - 1] += cond * h6;
 			}
 			int df = 4;
 		}
@@ -829,7 +818,7 @@ namespace DiffirentialCsharp
 
 		private void RightFirstCond()
 		{
-			double cond = 0;
+			double cond = 3;
 			r[n-1] += a[2, n - 1] * cond;
 			a[2, n-1] = 0;
 		}
