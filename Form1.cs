@@ -689,7 +689,7 @@ namespace DiffirentialCsharp
 		public void GetString_01(out string S, double h)
 		{
 			//[0,1]
-			S = "h;y\n";
+			S = "x;y\n";
 			S += "0;" + a[0, 0].ToString() + '\n';
 			double l = 0;
 			double[] H = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1 };
@@ -715,19 +715,20 @@ namespace DiffirentialCsharp
 
 		private double l(double x)
 		{
-			//return Math.Exp(x);
-			return Math.Exp(-x);
+			return Math.Exp(x);
+			//return Math.Exp(-x);
 		}
 
 		private double y(double x)
 		{
-			return Math.Sqrt(x);
+			//return Math.Sqrt(x);
+            return 0;
 		}
 
 		private double f(double x)
 		{
-			//return Math.Exp(x)* (pi * Math.Sin(pi*x) - Math.Cos(pi*x)) * pi;
-			return -Math.Exp(-x) * (4 * x - 3) + Math.Sqrt(x) * (x + 2 * x * x);
+			return Math.Exp(x)* (pi * Math.Sin(pi*x) - Math.Cos(pi*x)) * pi;
+			//return Math.Exp(-x) * (4 * x - 3) + Math.Sqrt(x) * (x + 2 * x * x);
 		}
 
 		public void GenGlobalMatrix(double left, double right, double h, int lc, int rc)
@@ -736,15 +737,15 @@ namespace DiffirentialCsharp
 			int start = 1, finish = n;
 			double x = left;
 			double l1, l2 = l(left), h_ = 1d / 2d / h, h6 = h / 6d;
-			
-			if (lc == 1)
-			{
-				n--;
-				start++;
-				x += h;
-				l2 = l(x);
-			}
-			if (rc == 1)
+
+            if (lc == 1)
+            {
+                n--;
+                start++;
+                x += h;
+                l2 = l(x);
+            }
+            if (rc == 1)
 			{
 				n--;
 				finish--;
@@ -782,45 +783,40 @@ namespace DiffirentialCsharp
 			double cond;
 			if (lc == 1)
 			{
-				a[0, 0] = (l(left) + l(left + h)) / 2d / h;
-				double b2 = h6 * (f(left) + 2 * f(left + h));
-				r[0] += b2;
-				a[1, 0] += a[0, 0];
-				LeftFirstCond();
-			}
+                a[0, 0] = (l(left) + l(left + h)) / 2d / h;
+                double b2 = h6 * (f(left) + 2 * f(left + h));
+                r[0] += b2;
+                a[1, 0] += a[0, 0];
+                cond = 0;
+                r[0] += a[0, 0] * cond;
+                a[0, 0] = 0;
+
+            }
 			else
 			{
 				cond = 1;
-				r[0] += cond * h6;
+				r[0] += cond ;
 			}
 			if (rc == 1)
 			{
-				a[2, n - 1] = (l(right) + l(right - h)) / 2d / h;
-				a[1, n - 1] += a[2, n - 1];
-				double e1 = h6 * (2 * f(right - h) + f(right));
-				r[n - 1] += e1;
-				RightFirstCond();
-			}
+                a[2, n - 1] = (l(right) + l(right - h)) / 2d / h;
+                a[1, n - 1] += a[2, n - 1];
+                double e1 = h6 * (2 * f(right - h) + f(right));
+                r[n - 1] += e1;
+                cond = 3;
+                r[n - 1] += a[2, n - 1] * cond;
+                a[2, n - 1] = 0;
+
+            }
 			else
 			{
-				cond = -5d / Math.E;
-				r[n - 1] += cond * h6;
+               // cond = 5d / Math.E;
+                cond = -pi* Math.E;
+                r[n - 1] += cond ;
 			}
 			int df = 4;
 		}
 
-		private void LeftFirstCond()
-		{
-			double cond = 0;
-			r[0] += a[0, 0] * cond;
-			a[0, 0] = 0;
-		}
-
-		private void RightFirstCond()
-		{
-			double cond = 3;
-			r[n-1] += a[2, n - 1] * cond;
-			a[2, n-1] = 0;
+		
 		}
 	}
-}
